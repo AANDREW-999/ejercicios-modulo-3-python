@@ -1,0 +1,10 @@
+[project]
+name = "ejercicios-modulo-3-python"
+version = "0.1.0"
+description = "Ejercicios del módulo 3 de Python"
+authors = [
+    { name = "Andres Gonzalez", email = "andresfelipegonzalez5a@gmail.com" }
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = []
