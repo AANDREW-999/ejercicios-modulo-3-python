@@ -20,9 +20,8 @@ dev = [
     "ruff>=0.14.1",
 ]
 [project.urls]
-homepage = "https://github.com/DaomPythonProjects/Modulo_3"
-repository = "https://github.com/DaomPythonProjects/Modulo_3"
-documentation = "https://github.com/DaomPythonProjects/Modulo_3/wiki"
+homepage = " https://github.com/AANDREW-999/ejercicios-modulo-3-python.git"
+repository = " https://github.com/AANDREW-999/ejercicios-modulo-3-python.git"
 
 [tool.pytest.ini_options]
 # Directorios de búsqueda de pruebas. Por defecto es el directorio actual.
