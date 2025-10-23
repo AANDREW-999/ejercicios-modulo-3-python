@@ -196,12 +196,12 @@ def ejecutar_calculadora_interactiva(console: Console, **kwargs) -> None:
     mostrar_titulo = kwargs.get("mostrar_titulo", True)
     continuar_por_defecto = kwargs.get("continuar_por_defecto", True)
 
-    # Mapeo de colores/emoji por categoría para mejorar presentación
+    # Mapeo de colores por categoría (sin emojis)
     estilo_categoria = {
-        "Bajo peso": ("cyan", "🟦"),
-        "Normal": ("green", "✅"),
-        "Sobrepeso": ("yellow", "⚠️"),
-        "Obesidad": ("red", "🚨"),
+        "Bajo peso": "cyan",
+        "Normal": "green",
+        "Sobrepeso": "yellow",
+        "Obesidad": "red",
     }
 
     # Bucle principal: permite repetir cálculos hasta que el usuario salga
@@ -221,11 +221,11 @@ def ejecutar_calculadora_interactiva(console: Console, **kwargs) -> None:
         imc = calcular_imc(peso, altura)
         categoria = interpretar_imc(imc)
 
-        color, emoji = estilo_categoria.get(categoria, ("white", ""))
+        color = estilo_categoria.get(categoria, "white")
         titulo = "IMC" if mostrar_titulo else None
 
         contenido = (
-            f"{emoji} [bold white]Resultados[/bold white]\n"
+            "[bold white]Resultados[/bold white]\n"
             f"Peso: [bold]{peso} kg[/bold]\n"
             f"Altura: [bold]{altura} m[/bold]\n"
             f"IMC: [bold {color}]{imc}[/]\n"
