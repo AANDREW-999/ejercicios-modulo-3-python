@@ -1,28 +1,85 @@
-# Ejercicios - Módulo 3 (Python)
+<!-- Encabezado con badges y estilo centrado -->
+<h1 align="center">📘 Ejercicios — Módulo 3 (Python)</h1>
 
-Descripción
-Proyecto con ejercicios prácticos del Módulo 3 del curso SENA. Su objetivo es consolidar conceptos de Python como estructuras de control, funciones, manejo de colecciones, entrada/salida y modularidad mediante problemas guiados y resueltos.
+<p align="center">
+  Prácticas del Módulo 3 (SENA): control de flujo, funciones, colecciones, E/S y modularidad.
+</p>
+<p align="center">
+  <img src="https://img.shields.io/badge/Dependencias-rich%20|%20pytest%20|%20ruff-2E8B57" alt="Dependencias"/>
+  <br/>
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white" alt="Python"/></a>
+  <a href="https://docs.astral.sh/uv/"><img src="https://img.shields.io/badge/Entorno-uv-7F52FF" alt="uv"/></a>
+  <a href="https://github.com/Textualize/rich"><img src="https://img.shields.io/badge/rich-CLI%20UI-4E9A06" alt="rich"/></a>
+  <a href="https://docs.pytest.org/"><img src="https://img.shields.io/badge/tests-pytest-0A9EDC" alt="pytest"/></a>
+  <a href="https://docs.astral.sh/ruff/"><img src="https://img.shields.io/badge/lint-ruff-000000" alt="ruff"/></a>
+</p>
+<hr/>
 
-Objetivos
-- Practicar y afianzar conceptos vistos en el módulo.
-- Proporcionar ejercicios con distinto nivel de dificultad.
-- Facilitar la evaluación mediante scripts ejecutables y ejemplos de entrada/salida.
+## 🧰 Tecnologías y entorno
+- 🐍 Python 3.x
+- 🚀 uv (gestión de entorno y dependencias)
+- 🎨 rich (salida de consola enriquecida)
+- ✅ pytest (pruebas)
+- 🧹 ruff (formato y lint)
 
-Estructura sugerida
-- ejercicios/         # scripts de los ejercicios
-- soluciones/         # soluciones propuestas (si aplica)
-- tests/              # pruebas unitarias o casos de prueba
-- README.md           # este archivo
+## ⚡ Ejecución rápida
+- Ejecutar el ejercicio de IMC:
+```bash
+python -m modulo3.ejercicio_1_refactorizacion_calculadora_imc
+```
 
-Requisitos
-- Python 3.8+ instalado
-- (Opcional) entorno virtual para dependencias
+- Ejecutar pruebas:
+```bash
+pytest -q
+```
 
-Cómo ejecutar un ejercicio
-1. Abrir terminal en la carpeta del proyecto.
-2. Ejecutar: `python ejercicios/nombre_ejercicio.py`
-3. Seguir las instrucciones o usar archivos de entrada si corresponde.
+- Revisar estilo/lint:
+```bash
+ruff check .
+ruff format .
+```
 
-Notas
-Mantener cada ejercicio autoconclusivo y agregar comentarios claros. Añadir pruebas en la carpeta tests cuando sea posible.
+## 📦 Instalación (con uv)
+```bash
+# Crear entorno virtual
+uv venv
 
+# Activar entorno
+# PowerShell
+. .venv/Scripts/Activate.ps1
+# cmd
+.venv\Scripts\activate.bat
+# Linux/Mac
+source .venv/bin/activate
+
+# Instalar dependencias
+uv add rich pytest ruff
+```
+
+<details>
+<summary>Alternativa con pip (opcional)</summary>
+
+```bash
+python -m venv .venv
+# Activar:
+# PowerShell:  . .venv/Scripts/Activate.ps1
+# cmd:         .venv\Scripts\activate.bat
+# Linux/Mac:   source .venv/bin/activate
+
+pip install rich pytest ruff
+```
+</details>
+
+## 🗂️ Estructura (resumen)
+- src/                  Código fuente
+- tests/                Pruebas unitarias (pytest)
+- README.md             Documentación
+
+## 🎯 Objetivos
+- Practicar conceptos clave del módulo.
+- Proveer ejercicios reproducibles con pruebas.
+- Mantener calidad con ruff.
+
+## 👤 Autor
+andres felips gonzalez pedraza  
+andresfelipegonzalez5a@gmail.com
