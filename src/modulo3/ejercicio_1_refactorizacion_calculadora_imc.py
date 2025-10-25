@@ -9,9 +9,15 @@ limpio y enfocado en el flujo principal.
 from typing import Final
 
 from rich.align import Align
+
+# NUEVO: estilos, tablas y cajas
+from rich.box import HEAVY, ROUNDED
 from rich.console import Console
 from rich.panel import Panel
+from rich.rule import Rule
+from rich.table import Table
 from rich.text import Text
+from rich.theme import Theme
 
 __all__ = [
     "calcular_imc",
@@ -20,6 +26,28 @@ __all__ = [
     "ejecutar_calculadora_interactiva",
     "main",
 ]
+
+# NUEVO: tema de colores para la app
+THEME = Theme(
+    {
+        "title": "bold white on #0b3d91",
+        "subtitle": "bold #8be9fd",
+        "prompt": "bold #ffd166",
+        "value": "bold #50fa7b",
+        "label": "bold #c792ea",
+        "border": "#44506b",
+        "accent": "#00bcd4",
+        "error": "bold red",
+        "warning": "bold #ffb86c",
+        "info": "#8be9fd",
+        "success": "bold #50fa7b",
+        # categorías IMC
+        "imc.bajo": "bold #2aa198",
+        "imc.normal": "bold #50fa7b",
+        "imc.sobre": "bold #f1fa8c",
+        "imc.ob": "bold #ff5555",
+    }
+)
 
 # Umbrales de interpretación del IMC (OMS simplificada)
 IMC_BAJO_PESO_MAX: Final = 18.5
@@ -113,10 +141,13 @@ def menu(console: Console) -> tuple[float, float] | None:
         ValueError: Reemite errores de validación de entradas numéricas.
     """
     while True:
-        header = Text(" Calculadora de IMC ", style="bold white on dark_blue")
-        console.print(
-            Panel(Align.center(header), expand=False, border_style="bright_blue")
-        )
+        # NUEVO: cabecera más vistosa
+        console.print(Rule(style="accent"))
+        header = Text(" Calculadora de IMC ", style="title")
+        sub = Text("Salud • Bienestar • Educación", style="subtitle")
+        console.print(Panel(Align.center(Text.assemble(header, "\n", sub))
+                            , border_style="accent", box=HEAVY))
+        console.print(Rule(style="accent"))
 
         console.print("[bold cyan]1)[/bold cyan] Calcular IMC")
         console.print("[bold magenta]2)[/bold magenta] Salir")
@@ -129,8 +160,10 @@ def menu(console: Console) -> tuple[float, float] | None:
             # Solicitar peso y altura con validación
             while True:
                 try:
-                    peso_txt = console.input("[bold]Ingresa tu peso (kg): [/bold]")
-                    altura_txt = console.input("[bold]Ingresa tu altura (m): [/bold]")
+                    peso_txt = console.input(
+                        "[prompt]» Ingresa tu peso (kg): [/prompt]")
+                    altura_txt = console.input(
+                        "[prompt]» Ingresa tu altura (m): [/prompt]")
 
                     # Validar vacíos e informar de inmediato
                     missing = []
@@ -160,9 +193,9 @@ def menu(console: Console) -> tuple[float, float] | None:
                             f"[bold red]Error:[/bold red] {err}",
                             title="Entrada inválida",
                             border_style="red",
+                            box=ROUNDED,
                         )
                     )
-                    # repetir la entrada de peso/altura
                     continue
         elif opcion == "2":
             return None
@@ -171,6 +204,7 @@ def menu(console: Console) -> tuple[float, float] | None:
                 Panel.fit(
                     "[bold red]Opción inválida. Usa 1 o 2.[/bold red]",
                     border_style="red",
+                    box=ROUNDED,
                 )
             )
             continue
@@ -198,10 +232,10 @@ def ejecutar_calculadora_interactiva(console: Console, **kwargs) -> None:
 
     # Mapeo de colores por categoría (sin emojis)
     estilo_categoria = {
-        "Bajo peso": "cyan",
-        "Normal": "green",
-        "Sobrepeso": "yellow",
-        "Obesidad": "red",
+        "Bajo peso": "imc.bajo",
+        "Normal": "imc.normal",
+        "Sobrepeso": "imc.sobre",
+        "Obesidad": "imc.ob",
     }
 
     # Bucle principal: permite repetir cálculos hasta que el usuario salga
@@ -213,6 +247,7 @@ def ejecutar_calculadora_interactiva(console: Console, **kwargs) -> None:
                     "[bold yellow]Saliendo... "
                     "Gracias por usar la calculadora.[/bold yellow]",
                     border_style="yellow",
+                    box=ROUNDED,
                 )
             )
             return
@@ -221,18 +256,27 @@ def ejecutar_calculadora_interactiva(console: Console, **kwargs) -> None:
         imc = calcular_imc(peso, altura)
         categoria = interpretar_imc(imc)
 
-        color = estilo_categoria.get(categoria, "white")
+        color_style = estilo_categoria.get(categoria, "value")
         titulo = "IMC" if mostrar_titulo else None
 
-        contenido = (
-            "[bold white]Resultados[/bold white]\n"
-            f"Peso: [bold]{peso} kg[/bold]\n"
-            f"Altura: [bold]{altura} m[/bold]\n"
-            f"IMC: [bold {color}]{imc}[/]\n"
-            f"Interpretación: [bold {color}]{categoria}[/]"
-        )
+        # NUEVO: tabla de resultados
+        tabla = Table.grid(padding=(0, 2))
+        tabla.add_column(justify="right", style="label", no_wrap=True)
+        tabla.add_column(style="value")
+        tabla.add_row("Peso", f"{peso} kg")
+        tabla.add_row("Altura", f"{altura} m")
+        tabla.add_row("IMC", f"[{color_style}]{imc:.2f}[/]")
+        tabla.add_row("Interpretación", f"[{color_style}]{categoria}[/]")
 
-        console.print(Panel.fit(contenido, title=titulo, border_style=color))
+        console.print(
+            Panel(
+                tabla,
+                title=titulo,
+                title_align="left",
+                border_style=color_style,
+                box=HEAVY,
+            )
+        )
 
         # Preguntar si desea otro cálculo; repetir la pregunta hasta respuesta válida
         pregunta = (
@@ -242,40 +286,36 @@ def ejecutar_calculadora_interactiva(console: Console, **kwargs) -> None:
         )
         while True:
             respuesta_raw = console.input(pregunta)
-            if respuesta_raw is None:
-                respuesta = ""
-            else:
-                respuesta = str(respuesta_raw).strip().lower()
-
+            respuesta = "" if respuesta_raw is None \
+                else str(respuesta_raw).strip().lower()
             if not respuesta:
-                # Enter -> tomar la sugerencia
                 respuesta = "s" if continuar_por_defecto else "n"
 
             if respuesta in ("s", "si", "y", "yes"):
                 console.print(
                     Panel.fit(
-                        "[bold blue]Preparando nuevo cálculo...[/bold blue]",
-                        border_style="blue",
+                        "[success]Preparando nuevo cálculo...[/success]",
+                        border_style="accent",
+                        box=ROUNDED,
                     )
                 )
-                break  # salir del bucle de la pregunta y repetir cálculo
+                break
             if respuesta in ("n", "no"):
                 console.print(
                     Panel.fit(
-                        "[bold yellow]Gracias. Hasta luego![/bold yellow]",
-                        border_style="yellow",
+                        "[success]Gracias. Hasta luego![/success]",
+                        border_style="accent",
+                        box=ROUNDED,
                     )
                 )
-                return  # salir de la función y terminar
-            # Si la respuesta no es ni S ni N, indicar error y volver a preguntar
+                return
             console.print(
                 Panel.fit(
-                    "[bold red]Respuesta inválida. "
-                    "Por favor responde S o N.[/bold red]",
-                    border_style="red",
+                    "[warning]Respuesta inválida. Por favor responde S o N.[/warning]",
+                    border_style="warning",
+                    box=ROUNDED,
                 )
             )
-            # repetir el while True de la pregunta
 
 
 def main() -> None:
@@ -283,7 +323,8 @@ def main() -> None:
 
     Inicializa la consola, delega en el menú y muestra el resultado del IMC.
     """
-    console = Console()
+    # NUEVO: consola con tema
+    console = Console(theme=THEME)
     try:
         ejecutar_calculadora_interactiva(console)
     except ValueError as err:
@@ -292,9 +333,6 @@ def main() -> None:
                 f"[bold red]Error:[/bold red] {err}",
                 title="Entrada inválida",
                 border_style="red",
+                box=ROUNDED,
             )
         )
-
-
-if __name__ == "__main__":
-    main()

@@ -2,21 +2,42 @@
 
 Valida entradas (nombre, edad, hobbies y redes) y muestra resultados con Rich.
 """
-
 from __future__ import annotations
 
 import re
 from typing import Iterable, Mapping
 
+# NUEVO: imports para diseño
+from rich.align import Align
+from rich.box import HEAVY, ROUNDED
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import IntPrompt, Prompt
+from rich.rule import Rule
 from rich.table import Table
+from rich.text import Text
+from rich.theme import Theme
 
 __all__ = ["crear_perfil", "menu", "main"]
 
-# Consola global para usarla también en el bloque KeyboardInterrupt
-console = Console()
+# NUEVO: tema y consola global con theme
+THEME = Theme(
+    {
+        "title": "bold #00d1ff",
+        "subtitle": "italic #8be9fd",
+        "prompt": "bold #ffd166",
+        "label": "bold #c792ea",
+        "value": "bold #80e27e",
+        "border": "#44506b",
+        "accent": "#00bcd4",
+        "error": "bold red",
+        "warning": "bold #ffb86c",
+        "info": "#8be9fd",
+        "success": "bold #50fa7b",
+        "muted": "#a6accd",
+    }
+)
+console = Console(theme=THEME)
 
 # Reglas de validación
 NOMBRE_REGEX = re.compile(r"^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ' -]+$")
@@ -178,13 +199,13 @@ def _parse_redes(texto: str) -> dict[str, str]:
 
 
 def _panel_titulo() -> Panel:
-    return Panel.fit(
-        "[bold cyan]Generador de Perfiles de Usuario[/bold cyan]\n"
-        "[white]Completa el formulario y obtén tu perfil formateado.[/white]\n"
-        "[dim]Presiona Ctrl+C para salir en cualquier momento.[/dim]",
-        border_style="cyan",
-        title="[magenta]Ejercicio 2[/magenta]",
-    )
+    # NUEVO: cabecera con título y subtítulo centrados y caja pesada
+    titulo = Text("Generador de Perfiles de Usuario", style="title")
+    subtitulo = Text("Completa el formulario y obtén tu perfil formateado"
+                     , style="subtitle")
+    contenido = Align.center(Text.assemble(titulo, "\n", subtitulo))
+    return Panel.fit(contenido, border_style="accent"
+                     , title="[magenta]Ejercicio 2[/magenta]", box=HEAVY)
 
 
 def _panel_instrucciones() -> Panel:
@@ -198,84 +219,82 @@ def _panel_instrucciones() -> Panel:
         "Ej: [dim]twitter=@AANDREW, github=ANDREW-999[/dim]\n"
         "[dim]Deja vacío los campos opcionales si no aplican.[/dim]"
     )
-    return Panel(instrucciones, border_style="blue"
-                 , title="[white]Instrucciones[/white]")
+    # NUEVO: caja redondeada y borde azul
+    return Panel(instrucciones, border_style="accent"
+                 , title="[white]Instrucciones[/white]", box=ROUNDED)
 
 
 def _panel_resultado(perfil: str) -> Panel:
     # Renderiza el string de perfil dentro de una tabla para mejor legibilidad
     lineas = perfil.splitlines()
     tabla = Table.grid(padding=(0, 1))
-    tabla.add_column(justify="right", style="bold cyan")
-    tabla.add_column(style="white")
-    tabla.title = ("[bold white]" +
-                   (lineas[0] if lineas else "Perfil de Usuario") + "[/bold white]")
+    tabla.add_column(justify="right", style="label", no_wrap=True)
+    tabla.add_column(style="value")
+    tabla.title = ("[bold white]"
+                   + (lineas[0] if lineas else "Perfil de Usuario") + "[/bold white]")
     for linea in lineas[1:]:
         if ":" in linea:
             clave, valor = linea.split(":", 1)
-            tabla.add_row(clave.strip(), f"[bold]{valor.strip()}[/bold]")
+            tabla.add_row(clave.strip(), f"[value]{valor.strip()}[/value]")
         else:
             tabla.add_row("", linea.strip())
-    return Panel(tabla, border_style="green", title="[green]Perfil generado[/green]")
+    # NUEVO: caja pesada y borde destacado
+    return Panel(tabla, border_style="accent"
+                 , title="[green]Perfil generado[/green]", box=HEAVY)
 
 
 def menu() -> None:
     """Muestra la interfaz interactiva con Rich para crear perfiles."""
     while True:
         console.clear()
+        # NUEVO: reglas separadoras estilizadas
+        console.print(Rule(style="accent"))
         console.print(_panel_titulo())
+        console.print(Rule(style="accent"))
         console.print(_panel_instrucciones())
 
         try:
             # Nombre (validación inmediata)
             while True:
-                nombre_in = Prompt.ask(
-                    "[bold cyan]Nombre[/bold cyan] "
-                    "[dim](obligatorio)[/dim]").strip()
+                nombre_in = Prompt.ask("[prompt]» Nombre[/prompt]"
+                                       " [dim](obligatorio)[/dim]").strip()
                 try:
                     nombre = _validar_nombre(nombre_in)
                     break
                 except ValueError as e:
                     console.print(
                         Panel.fit(
-                            f"[yellow]{e}[/yellow]",
-                            border_style="yellow",
+                            f"[warning]{e}[/warning]",
+                            border_style="warning",
                             title="[white]Validación[/white]",
+                            box=ROUNDED,
                         )
                     )
 
             # Edad (validación inmediata)
             while True:
-                edad_in = IntPrompt.ask(
-                    "[bold magenta]Edad[/bold magenta] [dim](0–120)[/dim]",
-                    default=0,
-                    show_default=True,
-                )
+                edad_in = IntPrompt.ask("[prompt]» Edad[/prompt] [dim](0–120)[/dim]"
+                                        , default=0, show_default=True)
                 try:
                     edad = _validar_edad(int(edad_in))
                     break
                 except ValueError as e:
                     console.print(
                         Panel.fit(
-                            f"[yellow]{e}[/yellow]",
-                            border_style="yellow",
+                            f"[warning]{e}[/warning]",
+                            border_style="warning",
                             title="[white]Validación[/white]",
+                            box=ROUNDED,
                         )
                     )
 
             # Campos opcionales con guía de formato
-            hobbies_txt = Prompt.ask(
-                "[bold green]Hobbies[/bold green] "
-                "[dim](separa por comas, opcional)[/dim]",
-                default="",
-                show_default=False,
-            )
-            redes_txt = Prompt.ask(
-                "[bold blue]Redes sociales[/bold blue] "
-                "[dim](pares clave=usuario separados por comas, opcional)[/dim]",
-                default="",
-                show_default=False,
-            )
+            hobbies_txt = Prompt.ask("[prompt]» Hobbies[/prompt] "
+                                     "[dim](separa por comas, opcional)[/dim]"
+                                     , default="", show_default=False)
+            redes_txt = Prompt.ask("[prompt]» Redes sociales[/prompt] "
+                                   "[dim](pares clave=usuario, opcional)[/dim]"
+                                   , default="", show_default=False)
 
             hobbies_raw = _parse_hobbies(hobbies_txt)
             redes_raw = _parse_redes(redes_txt)
@@ -283,30 +302,30 @@ def menu() -> None:
             # Limpieza y avisos
             hobbies, hobbies_desc = _limpiar_hobbies(hobbies_raw)
             redes, redes_desc = _limpiar_redes(redes_raw)
-            numero = 5
+            max_preview = 5
             if hobbies_desc:
-                lista = (", ".join(hobbies_desc[:5]) +
-                         ("..." if len(hobbies_desc) > numero else ""))
+                lista = (", ".join(hobbies_desc[:max_preview])
+                         + ("..." if len(hobbies_desc) > max_preview else ""))
                 console.print(
                     Panel.fit(
-                        f"[yellow]Algunos hobbies fueron "
-                        f"omitidos por formato o longitud:[/yellow]\n{lista}",
-                        border_style="yellow",
+                        f"[warning]Algunos hobbies"
+                        f" fueron omitidos por formato o longitud:[/warning]\n{lista}",
+                        border_style="warning",
                         title="[white]Aviso[/white]",
+                        box=ROUNDED,
                     )
                 )
-            numero = 5
             if redes_desc:
                 lista = ", ".join(f"{k}={v}".strip("=")
-                                  for k, v in list(redes_desc.items())[:5])
-                lista += "..." if len(redes_desc) > numero else ""
+                                  for k, v in list(redes_desc.items())[:max_preview])
+                lista += "..." if len(redes_desc) > max_preview else ""
                 console.print(
                     Panel.fit(
-                        "[yellow]Algunas redes fueron "
-                        "omitidas por clave/valor inválido.[/yellow]\n"
-                        f"{lista}",
-                        border_style="yellow",
+                        "[warning]Algunas redes fueron omitidas"
+                        " por clave/valor inválido.[/warning]\n" + lista,
+                        border_style="warning",
                         title="[white]Aviso[/white]",
+                        box=ROUNDED,
                     )
                 )
 
@@ -315,31 +334,29 @@ def menu() -> None:
         except ValueError as exc:
             console.print(
                 Panel.fit(
-                    f"[red]Error:[/red] {exc}",
-                    border_style="red",
+                    f"[error]Error:[/error] {exc}",
+                    border_style="error",
                     title="[white]Entrada inválida[/white]",
+                    box=ROUNDED,
                 )
             )
 
         # Preguntar si se desea crear otro perfil (acepta solo S/N)
         while True:
-            continuar = (
-                Prompt.ask(
-                    "[bold]¿Deseas crear otro perfil?[/bold] "
-                    "([green]S[/green]/[red]N[/red])",
-                    default="S",
-                    show_default=True,
-                )
-                .strip()
-                .lower()
-            )
+            continuar = Prompt.ask(
+                "[bold]¿Deseas crear otro perfil?"
+                "[/bold] ([green]S[/green]/[red]N[/red])",
+                default="S",
+                show_default=True,
+            ).strip().lower()
             if continuar in {"s", "n"}:
                 break
             console.print(
                 Panel.fit(
-                    "[yellow]Opción no válida. Responde S o N.[/yellow]",
-                    border_style="yellow",
+                    "[warning]Opción no válida. Responde S o N.[/warning]",
+                    border_style="warning",
                     title="[white]Atención[/white]",
+                    box=ROUNDED,
                 )
             )
         if continuar == "n":
