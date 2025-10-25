@@ -10,8 +10,8 @@ from typing import Iterable, Mapping
 
 from rich.console import Console
 from rich.panel import Panel
+from rich.prompt import IntPrompt, Prompt
 from rich.table import Table
-from rich.prompt import Prompt, IntPrompt
 
 __all__ = ["crear_perfil", "menu", "main"]
 
@@ -27,18 +27,22 @@ RED_KEY_REGEX = re.compile(r"^[a-z][a-z0-9_-]{1,29}$")
 def _validar_nombre(nombre: str) -> str:
     """Valida y normaliza el nombre (2–60 chars, letras/espacios/guiones/apóstrofes)."""
     limpio = " ".join(nombre.split())
+    numero_min= 2
+    numero_max= 60
     if not limpio:
         raise ValueError("El nombre no puede estar vacío.")
     if not NOMBRE_REGEX.match(limpio):
-        raise ValueError("El nombre solo permite letras, espacios, guiones y apóstrofes.")
-    if not (2 <= len(limpio) <= 60):
+        raise ValueError("El nombre solo permite letras"
+                         ", espacios, guiones y apóstrofes.")
+    if not (numero_min <= len(limpio) <= numero_max):
         raise ValueError("El nombre debe tener entre 2 y 60 caracteres.")
     return limpio
 
 
 def _validar_edad(edad: int) -> int:
     """Valida el rango de edad [0, 120]."""
-    if not (0 <= int(edad) <= 120):
+    numero_max=120
+    if not (0 <= int(edad) <= numero_max):
         raise ValueError("La edad debe estar entre 0 y 120.")
     return int(edad)
 
@@ -50,7 +54,7 @@ def _limpiar_hobbies(hobbies: Iterable[str]) -> tuple[list[str], list[str]]:
     validos: list[str] = []
     descartados: list[str] = []
     vistos: set[str] = set()
-
+    numero = 30
     for h in hobbies:
         if not isinstance(h, str):
             descartados.append(str(h))
@@ -58,7 +62,7 @@ def _limpiar_hobbies(hobbies: Iterable[str]) -> tuple[list[str], list[str]]:
         item = h.strip()
         if not item:
             continue
-        if len(item) > 30 or not HOBBY_REGEX.match(item):
+        if len(item) > numero or not HOBBY_REGEX.match(item):
             descartados.append(item)
             continue
         llave = item.lower()
@@ -76,7 +80,7 @@ def _limpiar_redes(redes: Mapping[str, str]) -> tuple[dict[str, str], dict[str, 
     """
     validas: dict[str, str] = {}
     descartadas: dict[str, str] = {}
-
+    numero= 50
     for k, v in redes.items():
         k0 = (k or "").strip()
         v0 = (v or "").strip()
@@ -93,7 +97,7 @@ def _limpiar_redes(redes: Mapping[str, str]) -> tuple[dict[str, str], dict[str, 
         if k_norm in {"twitter", "instagram", "tiktok"} and not v0.startswith("@"):
             v0 = f"@{v0}"
 
-        if len(v0) > 50:
+        if len(v0) > numero:
             descartadas[k0] = v0
             continue
 
@@ -103,7 +107,8 @@ def _limpiar_redes(redes: Mapping[str, str]) -> tuple[dict[str, str], dict[str, 
 
 
 def crear_perfil(nombre: str, edad: int, *hobbies: str, **redes_sociales: str) -> str:
-    """Genera un perfil de usuario a partir de argumentos posicionales, *args y **kwargs.
+    """Genera un perfil de usuario a partir
+    de argumentos posicionales, *args y **kwargs.
 
     Salida (multilínea):
         Perfil de Usuario
@@ -133,7 +138,8 @@ def crear_perfil(nombre: str, edad: int, *hobbies: str, **redes_sociales: str) -
     hobbies_txt = ", ".join(hobbies_limpios) if hobbies_limpios else "Ninguno"
     if redes_limpias:
         pares_redes = [
-            f"{k}={v}" for k, v in sorted(redes_limpias.items(), key=lambda kv: kv[0].lower())
+            f"{k}={v}" for k, v in sorted(redes_limpias.items()
+                                          , key=lambda kv: kv[0].lower())
         ]
         redes_txt = ", ".join(pares_redes)
     else:
@@ -183,15 +189,17 @@ def _panel_titulo() -> Panel:
 
 def _panel_instrucciones() -> Panel:
     instrucciones = (
-        "[bold]Cómo completar:[/bold]\n"
+        "[cyan]Cómo completar:[/cyan]\n"
         "[cyan]-[/cyan] [bold]Nombre:[/bold] obligatorio.\n"
         "[cyan]-[/cyan] [bold]Edad:[/bold] entero entre [green]0 y 120[/green].\n"
         "[cyan]-[/cyan] [bold]Hobbies:[/bold] separados por comas (Maximo 30).\n"
-        "[cyan]-[/cyan] [bold]Redes:[/bold] pares [yellow]clave=valor[/yellow] separados por comas. "
-        "Ej: [dim]twitter=@ana, github=ana28[/dim]\n"
+        "[cyan]-[/cyan] [bold]Redes:[/bold] pares [yellow]clave=valor[/yellow] "
+        "separados por comas. "
+        "Ej: [dim]twitter=@AANDREW, github=ANDREW-999[/dim]\n"
         "[dim]Deja vacío los campos opcionales si no aplican.[/dim]"
     )
-    return Panel(instrucciones, border_style="blue", title="[white]Instrucciones[/white]")
+    return Panel(instrucciones, border_style="blue"
+                 , title="[white]Instrucciones[/white]")
 
 
 def _panel_resultado(perfil: str) -> Panel:
@@ -200,7 +208,8 @@ def _panel_resultado(perfil: str) -> Panel:
     tabla = Table.grid(padding=(0, 1))
     tabla.add_column(justify="right", style="bold cyan")
     tabla.add_column(style="white")
-    tabla.title = "[bold white]" + (lineas[0] if lineas else "Perfil de Usuario") + "[/bold white]"
+    tabla.title = ("[bold white]" +
+                   (lineas[0] if lineas else "Perfil de Usuario") + "[/bold white]")
     for linea in lineas[1:]:
         if ":" in linea:
             clave, valor = linea.split(":", 1)
@@ -220,7 +229,9 @@ def menu() -> None:
         try:
             # Nombre (validación inmediata)
             while True:
-                nombre_in = Prompt.ask("[bold cyan]Nombre[/bold cyan] [dim](obligatorio)[/dim]").strip()
+                nombre_in = Prompt.ask(
+                    "[bold cyan]Nombre[/bold cyan] "
+                    "[dim](obligatorio)[/dim]").strip()
                 try:
                     nombre = _validar_nombre(nombre_in)
                     break
@@ -254,7 +265,8 @@ def menu() -> None:
 
             # Campos opcionales con guía de formato
             hobbies_txt = Prompt.ask(
-                "[bold green]Hobbies[/bold green] [dim](separa por comas, opcional)[/dim]",
+                "[bold green]Hobbies[/bold green] "
+                "[dim](separa por comas, opcional)[/dim]",
                 default="",
                 show_default=False,
             )
@@ -271,22 +283,27 @@ def menu() -> None:
             # Limpieza y avisos
             hobbies, hobbies_desc = _limpiar_hobbies(hobbies_raw)
             redes, redes_desc = _limpiar_redes(redes_raw)
-
+            numero = 5
             if hobbies_desc:
-                lista = ", ".join(hobbies_desc[:5]) + ("..." if len(hobbies_desc) > 5 else "")
+                lista = (", ".join(hobbies_desc[:5]) +
+                         ("..." if len(hobbies_desc) > numero else ""))
                 console.print(
                     Panel.fit(
-                        f"[yellow]Algunos hobbies fueron omitidos por formato o longitud:[/yellow]\n{lista}",
+                        f"[yellow]Algunos hobbies fueron "
+                        f"omitidos por formato o longitud:[/yellow]\n{lista}",
                         border_style="yellow",
                         title="[white]Aviso[/white]",
                     )
                 )
+            numero = 5
             if redes_desc:
-                lista = ", ".join(f"{k}={v}".strip("=") for k, v in list(redes_desc.items())[:5])
-                lista += "..." if len(redes_desc) > 5 else ""
+                lista = ", ".join(f"{k}={v}".strip("=")
+                                  for k, v in list(redes_desc.items())[:5])
+                lista += "..." if len(redes_desc) > numero else ""
                 console.print(
                     Panel.fit(
-                        "[yellow]Algunas redes fueron omitidas por clave/valor inválido.[/yellow]\n"
+                        "[yellow]Algunas redes fueron "
+                        "omitidas por clave/valor inválido.[/yellow]\n"
                         f"{lista}",
                         border_style="yellow",
                         title="[white]Aviso[/white]",
