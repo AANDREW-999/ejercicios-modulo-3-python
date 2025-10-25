@@ -119,7 +119,7 @@ def crear_perfil(nombre: str, edad: int, *hobbies: str, **redes_sociales: str) -
         **redes_sociales: Pares red=usuario (por ejemplo, twitter='@user').
 
     Returns:
-        Un string formateado con todo el perfil.
+        Un string formateado con el perfil.
 
     Raises:
         ValueError: Si el nombre es inválido o si la edad está fuera de rango.
@@ -184,9 +184,9 @@ def _panel_titulo() -> Panel:
 def _panel_instrucciones() -> Panel:
     instrucciones = (
         "[bold]Cómo completar:[/bold]\n"
-        "[cyan]-[/cyan] [bold]Nombre:[/bold] obligatorio (2–60 chars; letras, espacios, guiones, ').\n"
+        "[cyan]-[/cyan] [bold]Nombre:[/bold] obligatorio.\n"
         "[cyan]-[/cyan] [bold]Edad:[/bold] entero entre [green]0 y 120[/green].\n"
-        "[cyan]-[/cyan] [bold]Hobbies:[/bold] separados por comas (máx 30 chars c/u).\n"
+        "[cyan]-[/cyan] [bold]Hobbies:[/bold] separados por comas (Maximo 30).\n"
         "[cyan]-[/cyan] [bold]Redes:[/bold] pares [yellow]clave=valor[/yellow] separados por comas. "
         "Ej: [dim]twitter=@ana, github=ana28[/dim]\n"
         "[dim]Deja vacío los campos opcionales si no aplican.[/dim]"
