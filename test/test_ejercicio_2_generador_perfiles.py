@@ -17,10 +17,10 @@ def test_perfil_completo() -> None:
 
 
 def test_perfil_sin_hobbies_ni_redes() -> None:
-    resultado = crear_perfil("Carlos", 19)
+    resultado = crear_perfil("Andres", 19)
     esperado = (
         "Perfil de Usuario\n"
-        "Nombre: Carlos\n"
+        "Nombre: Andres\n"
         "Edad: 19\n"
         "Hobbies: Ninguno\n"
         "Redes sociales: Ninguna"
