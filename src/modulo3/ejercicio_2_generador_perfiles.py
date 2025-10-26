@@ -46,7 +46,18 @@ RED_KEY_REGEX = re.compile(r"^[a-z][a-z0-9_-]{1,29}$")
 
 
 def _validar_nombre(nombre: str) -> str:
-    """Valida y normaliza el nombre (2–60 chars, letras/espacios/guiones/apóstrofes)."""
+    """Valida y normaliza el nombre del usuario.
+
+    Args:
+        nombre: Texto del nombre a validar.
+
+    Returns:
+        El nombre limpio, con espacios normalizados.
+
+    Raises:
+        ValueError: Si está vacío, contiene caracteres no permitidos
+            o su longitud no está entre 2 y 60 caracteres.
+    """
     limpio = " ".join(nombre.split())
     numero_min= 2
     numero_max= 60
@@ -61,7 +72,17 @@ def _validar_nombre(nombre: str) -> str:
 
 
 def _validar_edad(edad: int) -> int:
-    """Valida el rango de edad [0, 120]."""
+    """Valida el rango de edad permitido.
+
+    Args:
+        edad: Edad a validar.
+
+    Returns:
+        La edad válida como entero.
+
+    Raises:
+        ValueError: Si no está en el rango [0, 120].
+    """
     numero_max=120
     if not (0 <= int(edad) <= numero_max):
         raise ValueError("La edad debe estar entre 0 y 120.")
@@ -69,8 +90,18 @@ def _validar_edad(edad: int) -> int:
 
 
 def _limpiar_hobbies(hobbies: Iterable[str]) -> tuple[list[str], list[str]]:
-    """Normaliza hobbies: quita vacíos, valida caracteres/largo, y elimina duplicados.
-    Returns: (hobbies_validos, hobbies_descartados)
+    """Normaliza una colección de hobbies.
+
+    - Elimina vacíos y duplicados (insensible a mayúsculas).
+    - Valida caracteres y longitud máxima (30).
+
+    Args:
+        hobbies: Iterable de textos de hobbies.
+
+    Returns:
+        Una tupla (validos, descartados) donde:
+        - validos: lista de hobbies válidos conservando el orden.
+        - descartados: entradas rechazadas por formato o longitud.
     """
     validos: list[str] = []
     descartados: list[str] = []
@@ -95,9 +126,20 @@ def _limpiar_hobbies(hobbies: Iterable[str]) -> tuple[list[str], list[str]]:
 
 
 def _limpiar_redes(redes: Mapping[str, str]) -> tuple[dict[str, str], dict[str, str]]:
-    """Normaliza redes: claves en minúsculas sin espacios, valida patrón y valor.
-    Añade '@' en twitter/instagram/tiktok si falta.
-    Returns: (redes_validas, redes_descartadas)
+    """Normaliza pares red=usuario.
+
+    - Normaliza la clave: minúsculas sin espacios.
+    - Valida la clave con RED_KEY_REGEX.
+    - Añade '@' si falta para twitter/instagram/tiktok.
+    - Rechaza valores vacíos o > 50 caracteres.
+
+    Args:
+        redes: Mapeo de nombre de red a usuario.
+
+    Returns:
+        Una tupla (validas, descartadas) con:
+        - validas: dict normalizado de redes aceptadas.
+        - descartadas: dict de entradas omitidas (originales).
     """
     validas: dict[str, str] = {}
     descartadas: dict[str, str] = {}
@@ -128,8 +170,7 @@ def _limpiar_redes(redes: Mapping[str, str]) -> tuple[dict[str, str], dict[str, 
 
 
 def crear_perfil(nombre: str, edad: int, *hobbies: str, **redes_sociales: str) -> str:
-    """Genera un perfil de usuario a partir
-    de argumentos posicionales, *args y **kwargs.
+    """Genera un perfil de usuario a partir de argumentos posicionales y nombrados.
 
     Salida (multilínea):
         Perfil de Usuario
@@ -139,10 +180,10 @@ def crear_perfil(nombre: str, edad: int, *hobbies: str, **redes_sociales: str) -
         Redes sociales: <k1=v1, k2=v2, ...> | Ninguna
 
     Args:
-        nombre: Nombre de la persona. No vacío tras recortar espacios.
-        edad: Edad de la persona. Entero >= 0.
+        nombre: Nombre de la persona.
+        edad: Edad de la persona (entero >= 0).
         *hobbies: Colección variable de hobbies.
-        **redes_sociales: Pares red=usuario (por ejemplo, twitter='@user').
+        **redes_sociales: Pares red=usuario (p. ej. twitter='@user').
 
     Returns:
         Un string formateado con el perfil.
@@ -176,14 +217,28 @@ def crear_perfil(nombre: str, edad: int, *hobbies: str, **redes_sociales: str) -
 
 
 def _parse_hobbies(texto: str) -> list[str]:
-    """Convierte 'h1, h2, ...' en lista de hobbies limpiando espacios."""
+    """Convierte una cadena CSV en lista de hobbies.
+
+    Args:
+        texto: Cadena con valores separados por comas.
+
+    Returns:
+        Lista de hobbies limpiados (sin vacíos).
+    """
     if not texto.strip():
         return []
     return [h.strip() for h in texto.split(",") if h.strip()]
 
 
 def _parse_redes(texto: str) -> dict[str, str]:
-    """Convierte 'clave=valor, clave=valor' en dict."""
+    """Convierte una cadena CSV de pares clave=valor a un diccionario.
+
+    Args:
+        texto: Cadena con pares separados por comas (clave=valor).
+
+    Returns:
+        Diccionario {clave: valor} con pares válidos encontrados.
+    """
     redes: dict[str, str] = {}
     if not texto.strip():
         return redes
@@ -199,7 +254,14 @@ def _parse_redes(texto: str) -> dict[str, str]:
 
 
 def _panel_titulo() -> Panel:
-    # NUEVO: cabecera con título y subtítulo centrados y caja pesada
+    """Construye el panel de cabecera.
+
+    Args:
+        None
+
+    Returns:
+        Panel estilizado con título y subtítulo.
+    """
     titulo = Text("Generador de Perfiles de Usuario", style="title")
     subtitulo = Text("Completa el formulario y obtén tu perfil formateado"
                      , style="subtitle")
@@ -209,6 +271,14 @@ def _panel_titulo() -> Panel:
 
 
 def _panel_instrucciones() -> Panel:
+    """Construye el panel de instrucciones del formulario.
+
+    Args:
+        None
+
+    Returns:
+        Panel con texto formateado de instrucciones.
+    """
     instrucciones = (
         "[cyan]Cómo completar:[/cyan]\n"
         "[cyan]-[/cyan] [bold]Nombre:[/bold] obligatorio.\n"
@@ -225,6 +295,14 @@ def _panel_instrucciones() -> Panel:
 
 
 def _panel_resultado(perfil: str) -> Panel:
+    """Envuelve la representación de perfil en una tabla dentro de un Panel.
+
+    Args:
+        perfil: Texto multilínea generado por crear_perfil.
+
+    Returns:
+        Panel con una tabla de campos clave/valor del perfil.
+    """
     # Renderiza el string de perfil dentro de una tabla para mejor legibilidad
     lineas = perfil.splitlines()
     tabla = Table.grid(padding=(0, 1))
@@ -244,7 +322,14 @@ def _panel_resultado(perfil: str) -> Panel:
 
 
 def menu() -> None:
-    """Muestra la interfaz interactiva con Rich para crear perfiles."""
+    """Muestra la interfaz interactiva con Rich para crear perfiles.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
     while True:
         console.clear()
         # NUEVO: reglas separadoras estilizadas
@@ -364,7 +449,14 @@ def menu() -> None:
 
 
 def main() -> None:
-    """Punto de entrada: solo invoca el menú."""
+    """Punto de entrada: invoca el menú.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
     menu()
 
 

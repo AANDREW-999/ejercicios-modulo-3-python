@@ -41,8 +41,8 @@ console = Console(theme=THEME)
 def crear_contador() -> Callable[[], int]:
     """Crea un contador independiente usando un closure.
 
-    El contador inicia en 0 y, cada vez que se invoca la función retornada,
-    incrementa en 1 y devuelve el nuevo valor.
+    Args:
+        None
 
     Returns:
         Una función sin argumentos que incrementa y devuelve el conteo actual.
@@ -70,7 +70,14 @@ def crear_contador() -> Callable[[], int]:
 
 
 def _panel_titulo() -> Panel:
-    """Cabecera principal con diseño mejorado."""
+    """Construye la cabecera principal estilizada.
+
+    Args:
+        None
+
+    Returns:
+        Panel con título y subtítulo centrados.
+    """
     title = Text("Fábrica de contadores (Closure)", style="title")
     subtitle = Text("Cada contador es independiente y recuerda su estado"
                     , style="subtitle")
@@ -81,7 +88,14 @@ def _panel_titulo() -> Panel:
 
 
 def _panel_instrucciones() -> Panel:
-    """Panel de instrucciones con colores y estructura."""
+    """Construye el panel de instrucciones del menú.
+
+    Args:
+        None
+
+    Returns:
+        Panel con la lista de opciones disponible.
+    """
     tabla = Table.grid(padding=(0, 2))
     tabla.add_column(justify="right", style="prompt", no_wrap=True)
     tabla.add_column(style="table.value")
@@ -95,7 +109,15 @@ def _panel_instrucciones() -> Panel:
 
 
 def _tabla_contadores(contadores: list[Callable[[], int]], valores: list[int]) -> Table:
-    """Tabla con estado actual de los contadores."""
+    """Construye una tabla con el estado actual de los contadores.
+
+    Args:
+        contadores: Lista de funciones contador.
+        valores: Lista espejo con los valores actuales de cada contador.
+
+    Returns:
+        Tabla con dos columnas: índice y valor actual.
+    """
     tabla = Table(
         title="[table.header]Contadores[/table.header]",
         box=HEAVY,
@@ -115,7 +137,14 @@ def _tabla_contadores(contadores: list[Callable[[], int]], valores: list[int]) -
 
 
 def _demo_independencia_panel() -> Panel:
-    """Crea dos contadores y demuestra que son independientes."""
+    """Genera un panel que demuestra la independencia de dos contadores.
+
+    Args:
+        None
+
+    Returns:
+        Panel con tabla de llamadas y resultados.
+    """
     c1 = crear_contador()
     c2 = crear_contador()
 
@@ -146,7 +175,14 @@ def _demo_independencia_panel() -> Panel:
 
 
 def menu() -> None:
-    """Muestra la interfaz interactiva con Rich para gestionar contadores."""
+    """Muestra la interfaz interactiva con Rich para gestionar contadores.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
     contadores: list[Callable[[], int]] = []
     valores: list[int] = []  # espejo de valores actuales (inician en 0)
 
@@ -215,7 +251,14 @@ def menu() -> None:
 
 
 def main() -> None:
-    """Punto de entrada: solo invoca el menú."""
+    """Punto de entrada: invoca el menú.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
     menu()
 
 

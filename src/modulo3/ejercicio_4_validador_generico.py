@@ -90,6 +90,14 @@ def es_mayor_a_10(numero: int) -> bool:
 
 
 def _panel_titulo() -> Panel:
+    """Construye el panel de título principal.
+
+    Args:
+        None
+
+    Returns:
+        Panel con título y subtítulo del ejercicio.
+    """
     texto = (
         "[bold cyan]Validador de Datos Genérico[/bold cyan]\n"
         "[dim]Funciones de orden superior + Rich UI[/dim]"
@@ -103,6 +111,14 @@ def _panel_titulo() -> Panel:
 
 
 def _panel_menu() -> Panel:
+    """Construye el panel con las opciones del menú.
+
+    Args:
+        None
+
+    Returns:
+        Panel con las opciones disponibles.
+    """
     texto = (
         "[bold]Opciones[/bold]\n"
         "1) Validar correos electrónicos\n"
@@ -113,6 +129,16 @@ def _panel_menu() -> Panel:
 
 
 def _tabla_lista(titulo: str, elementos: list[str]) -> Table:
+    """Crea una tabla simple con índice y valor.
+
+    Args:
+        titulo: Título a mostrar en la tabla.
+        elementos: Lista de elementos a renderizar.
+
+    Returns:
+        Tabla con dos columnas (# y Valor). Si la lista está vacía,
+        muestra una fila con guiones.
+    """
     tabla = Table(title=titulo, show_lines=True, expand=True)
     tabla.add_column("#", justify="right", style="bold")
     tabla.add_column("Valor", overflow="fold")
@@ -125,6 +151,15 @@ def _tabla_lista(titulo: str, elementos: list[str]) -> Table:
 
 
 def _panel_resumen(total: int, validos: int) -> Panel:
+    """Construye un panel con el resumen de validación.
+
+    Args:
+        total: Cantidad total evaluada.
+        validos: Cantidad que pasó la validación.
+
+    Returns:
+        Panel con totales de válidos e inválidos.
+    """
     texto = (
         f"[bold white]Total:[/bold white] {total}\n"
         f"[bold green]Válidos:[/bold green] {validos}\n"
@@ -134,13 +169,30 @@ def _panel_resumen(total: int, validos: int) -> Panel:
 
 
 def _parse_csv_texto(texto: str) -> list[str]:
+    """Convierte una cadena CSV en lista de textos.
+
+    Args:
+        texto: Cadena con valores separados por comas.
+
+    Returns:
+        Lista de tokens no vacíos, sin espacios laterales.
+    """
     if not texto.strip():
         return []
     return [parte.strip() for parte in texto.split(",") if parte.strip()]
 
 
 def _parse_csv_enteros(texto: str) -> tuple[list[int], list[str]]:
-    """Devuelve (numeros_validos, tokens_invalidos)."""
+    """Parsea enteros desde una cadena CSV.
+
+    Args:
+        texto: Cadena con enteros separados por comas.
+
+    Returns:
+        Una tupla (numeros_validos, tokens_invalidos):
+        - numeros_validos: Lista de ints parseados correctamente.
+        - tokens_invalidos: Lista de tokens que no pudieron convertirse.
+    """
     if not texto.strip():
         return [], []
     numeros: list[int] = []
@@ -164,7 +216,14 @@ def _parse_csv_enteros(texto: str) -> tuple[list[int], list[str]]:
 
 
 def menu() -> None:
-    """Interfaz interactiva con Rich para validar datos."""
+    """Interfaz interactiva con Rich para validar datos.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
     while True:
         console.clear()
         console.print(_panel_titulo())
@@ -196,6 +255,14 @@ def menu() -> None:
 
 
 def _flujo_validar_correos() -> None:
+    """Flujo interactivo para validar correos ingresados por el usuario.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
     console.rule("[bold]Validación de correos[/bold]")
     entrada = Prompt.ask(
         "Ingresa correos separados por comas",
@@ -214,6 +281,14 @@ def _flujo_validar_correos() -> None:
 
 
 def _flujo_filtrar_mayores() -> None:
+    """Flujo interactivo para filtrar enteros mayores a 10.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
     console.rule("[bold]Números mayores a 10[/bold]")
     entrada = Prompt.ask(
         "Ingresa números enteros separados por comas",
@@ -240,7 +315,14 @@ def _flujo_filtrar_mayores() -> None:
 
 
 def main() -> None:
-    """Punto de entrada: solo invoca el menú."""
+    """Punto de entrada: invoca el menú.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
     menu()
 
 
