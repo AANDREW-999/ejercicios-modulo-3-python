@@ -5,6 +5,11 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Prompt
 from rich.table import Table
+from rich.align import Align
+from rich.rule import Rule
+from rich.text import Text
+from rich.box import HEAVY, ROUNDED, DOUBLE
+from rich.theme import Theme
 
 __all__ = [
     "TASA_IVA",
@@ -14,7 +19,24 @@ __all__ = [
     "main",
 ]
 
-console = Console()
+# NUEVO: tema y consola estilizada
+THEME = Theme(
+    {
+        "title": "bold cyan",
+        "subtitle": "dim",
+        "accent": "magenta",
+        "menu.border": "magenta",
+        "menu.number": "bold cyan",
+        "menu.option": "bold white",
+        "label": "bold white",
+        "value": "bright_white",  # Corregido: antes 'bright-white'
+        "success": "green",
+        "warning": "yellow",
+        "error": "red",
+        "info": "cyan",
+    }
+)
+console = Console(theme=THEME)
 
 # Variable global de tasa (19%)
 TASA_IVA: float = 0.19
@@ -67,46 +89,64 @@ def _parse_float(texto: str) -> float:
 
 
 def _panel_titulo() -> Panel:
-    texto = (
-        "[bold cyan]Calculadora de Impuestos[/bold cyan]\n"
-        "[dim]Tasa global editable con demostración en vivo[/dim]"
+    texto = Align.center(
+        Text.assemble(
+            Text(" Calculadora de Impuestos ", style="title"),
+            "\n",
+            Text("Tasa global editable con demostración en vivo", style="subtitle"),
+        )
     )
-    return Panel.fit(
+    return Panel(
         texto,
         title="Ejercicio 5",
         subtitle="Scope Global, global",
-        border_style="cyan",
+        border_style="accent",
+        box=DOUBLE,
+        padding=(1, 2),
     )
 
 
 def _panel_estado() -> Panel:
     porcentaje = round(TASA_IVA * 100, 2)
     return Panel.fit(
-        f"[bold white]Tasa actual (TASA_IVA):[/bold white] [bold]{porcentaje}%[/bold]",
+        f"[label]Tasa actual (TASA_IVA):[/label] [value]{porcentaje}%[/value]",
         title="Estado",
-        border_style="blue",
+        border_style="menu.border",
+        box=ROUNDED,
     )
 
 
 def _panel_menu() -> Panel:
     texto = (
-        "[bold]Opciones[/bold]\n"
-        "1) Calcular IVA y Total con la tasa actual\n"
-        "2) Actualizar TASA_IVA\n"
-        "3) Demostración Antes/Después\n"
-        "4) Salir"
+        f"[menu.number]1)[/menu.number] [menu.option]Calcular IVA y Total con la tasa actual[/menu.option]\n"
+        f"[menu.number]2)[/menu.number] [menu.option]Actualizar TASA_IVA[/menu.option]\n"
+        f"[menu.number]3)[/menu.number] [menu.option]Demostración Antes/Después[/menu.option]\n"
+        f"[menu.number]4)[/menu.number] [menu.option]Salir[/menu.option]"
     )
-    return Panel(texto, title="Menú", border_style="magenta")
+    return Panel(
+        Align.left(texto),
+        title="Menú",
+        border_style="menu.border",
+        box=HEAVY,
+        padding=(1, 2),
+    )
 
 
 def _tabla_resultado(precio_base: float, iva: float) -> Table:
     total = round(precio_base + iva, 2)
-    tabla = Table(title="Detalle de cálculo", show_lines=True, expand=True)
-    tabla.add_column("Concepto", style="bold")
-    tabla.add_column("Valor", justify="right")
+    tabla = Table(
+        title="Detalle de cálculo",
+        show_lines=True,
+        expand=True,
+        box=ROUNDED,
+        header_style="label",
+        title_style="label",
+    )
+    tabla.add_column("Concepto", style="label")
+    tabla.add_column("Valor", justify="right", style="value")
     tabla.add_row("Precio base", f"{precio_base:.2f}")
     tabla.add_row("IVA", f"{iva:.2f}")
-    tabla.add_row("Total", f"{total:.2f}")
+    tabla.add_row("[label]Total[/label]", f"[success]{total:.2f}[/success]")
     return tabla
 
 
@@ -116,27 +156,29 @@ def _panel_demo(precio_base: float, tasa_old: float, tasa_new: float) -> Panel:
     iva_new = round(precio_base * tasa_new, 2)
     total_new = round(precio_base + iva_new, 2)
 
-    t1 = Table(title="Antes", expand=True)
-    t1.add_column("Campo", style="bold")
-    t1.add_column("Valor", justify="right")
+    t1 = Table(title="Antes", expand=True, box=ROUNDED, header_style="label", title_style="label")
+    t1.add_column("Campo", style="label")
+    t1.add_column("Valor", justify="right", style="value")
     t1.add_row("Tasa", f"{tasa_old*100:.2f}%")
     t1.add_row("Precio base", f"{precio_base:.2f}")
     t1.add_row("IVA", f"{iva_old:.2f}")
     t1.add_row("Total", f"{total_old:.2f}")
 
-    t2 = Table(title="Después", expand=True)
-    t2.add_column("Campo", style="bold green")
-    t2.add_column("Valor", justify="right")
-    t2.add_row("Tasa", f"{tasa_new*100:.2f}%")
+    t2 = Table(title="Después", expand=True, box=ROUNDED, header_style="label", title_style="label")
+    t2.add_column("Campo", style="label")
+    t2.add_column("Valor", justify="right", style="value")
+    t2.add_row("Tasa", f"[success]{tasa_new*100:.2f}%[/success]")
     t2.add_row("Precio base", f"{precio_base:.2f}")
-    t2.add_row("IVA", f"{iva_new:.2f}")
-    t2.add_row("Total", f"{total_new:.2f}")
+    t2.add_row("IVA", f"[success]{iva_new:.2f}[/success]")
+    t2.add_row("Total", f"[success]{total_new:.2f}[/success]")
 
     columnas = Columns([t1, t2], equal=True, expand=True)
     return Panel(
         columnas,
         title="Demostración de cambio de tasa",
-        border_style="green",
+        border_style="success",
+        box=HEAVY,
+        padding=(1, 2),
     )
 
 
@@ -150,6 +192,7 @@ def menu() -> None:
     while True:
         console.clear()
         console.print(_panel_titulo())
+        console.print(Rule(style="accent"))
         console.print(_panel_estado())
         console.print(_panel_menu())
 
@@ -165,13 +208,14 @@ def menu() -> None:
                 precio_base = _parse_float(precio_txt)
                 iva = calcular_iva(precio_base)
                 tabla = _tabla_resultado(precio_base, iva)
-                console.print(Panel(tabla, border_style="green"))
+                console.print(Panel(tabla, border_style="success", box=ROUNDED))
             except ValueError as exc:
                 console.print(
                     Panel.fit(
-                        f"[red]Error:[/red] {exc}",
-                        border_style="red",
+                        f"[error]Error:[/error] {exc}",
+                        border_style="error",
                         title="Entrada inválida",
+                        box=ROUNDED,
                     )
                 )
 
@@ -182,17 +226,19 @@ def menu() -> None:
                 actualizar_tasa_iva(nueva_tasa)
                 console.print(
                     Panel.fit(
-                        f"[green]TASA_IVA actualizada a {nueva_tasa*100:.2f}%[/green]",
-                        border_style="green",
+                        f"[success]TASA_IVA actualizada a {nueva_tasa*100:.2f}%[/success]",
+                        border_style="success",
                         title="OK",
+                        box=ROUNDED,
                     )
                 )
             except ValueError as exc:
                 console.print(
                     Panel.fit(
-                        f"[red]Error:[/red] {exc}",
-                        border_style="red",
+                        f"[error]Error:[/error] {exc}",
+                        border_style="error",
                         title="Entrada inválida",
+                        box=ROUNDED,
                     )
                 )
 
@@ -210,20 +256,22 @@ def menu() -> None:
             except ValueError as exc:
                 console.print(
                     Panel.fit(
-                        f"[red]Error:[/red] {exc}",
-                        border_style="red",
+                        f"[error]Error:[/error] {exc}",
+                        border_style="error",
                         title="Entrada inválida",
+                        box=ROUNDED,
                     )
                 )
 
         elif opcion == "4":
             break
 
-        _ = Prompt.ask(
-            "\n[dim]Enter para continuar (o escribe 'salir' para terminar)[/dim]",
+        console.print(Rule(style="accent"))
+        seguir = Prompt.ask(
+            "[dim]Enter para continuar (o escribe 'salir' para terminar)[/dim]",
             default="",
         )
-        if _.strip().lower() == "salir":
+        if seguir.strip().lower() == "salir":
             break
 
 

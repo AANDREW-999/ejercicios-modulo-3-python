@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from modulo3.ejercicio_8_transformacion_comprehensions import (
+from src.bloque2.ejercicio_8_transformacion_comprehensions import (
     longitudes_por_palabra,
     palabras_mayusculas_largas,
 )

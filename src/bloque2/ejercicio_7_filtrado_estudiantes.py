@@ -7,6 +7,11 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import FloatPrompt, IntPrompt, Prompt
 from rich.table import Table
+# NUEVO: estilos y cajas
+from rich.align import Align
+from rich.text import Text
+from rich.box import HEAVY, ROUNDED, DOUBLE
+from rich.theme import Theme
 
 __all__ = ["filtrar_aprobados", "menu", "main"]
 
@@ -18,7 +23,24 @@ OPCION_EJEMPLO: int = 1
 OPCION_PERSONALIZADA: int = 2
 OPCION_SALIR: int = 3
 
-console = Console()
+# NUEVO: tema para Ejercicio 7 (verde)
+THEME = Theme(
+    {
+        "title": "bold green3",
+        "subtitle": "dim",
+        "accent": "green3",
+        "menu.border": "green4",
+        "menu.number": "bold green3",
+        "menu.option": "bold white",
+        "label": "bold white",
+        "value": "bright_white",  # corregido (antes: "bright-white")
+        "success": "green3",
+        "warning": "yellow3",
+        "error": "red3",
+        "info": "cyan3",
+    }
+)
+console = Console(theme=THEME)
 
 
 def filtrar_aprobados(
@@ -67,36 +89,50 @@ def filtrar_aprobados(
 
 
 def _panel_titulo() -> Panel:
-    texto = (
-        "[bold cyan]Filtrado de Estudiantes con filter + lambda[/bold cyan]\n"
-        "[dim]Obtén únicamente los aprobados[/dim]"
+    # NUEVO: cabecera centrada y caja doble
+    cuerpo = Align.center(
+        Text.assemble(
+            Text(" Filtrado de Estudiantes con filter + lambda ", style="title"),
+            "\n",
+            Text("Obtén únicamente los aprobados", style="subtitle"),
+        )
     )
-    return Panel.fit(
-        texto,
+    return Panel(
+        cuerpo,
         title="Ejercicio 7",
         subtitle="Programación funcional",
-        border_style="cyan",
+        border_style="accent",
+        box=DOUBLE,
+        padding=(1, 2),
     )
 
 
 def _panel_menu() -> Panel:
+    # NUEVO: opciones coloreadas y caja pesada
     texto = (
-        "[bold]Opciones[/bold]\n"
-        "1) Ejecutar ejemplo por defecto (nota mínima 3.0)\n"
-        "2) Ingresar lista y nota mínima personalizada\n"
-        "3) Salir"
+        f"[menu.number]1)[/menu.number] [menu.option]Ejemplo por defecto (nota mínima 3.0)[/menu.option]\n"
+        f"[menu.number]2)[/menu.number] [menu.option]Lista y nota mínima personalizada[/menu.option]\n"
+        f"[menu.number]3)[/menu.number] [menu.option]Salir[/menu.option]"
     )
-    return Panel(texto, title="Menú", border_style="magenta")
+    return Panel(texto, title="Menú", border_style="menu.border", box=HEAVY)
 
 
 def _tabla_estudiantes(
     titulo: str,
     items: Iterable[tuple[str, float]],
 ) -> Table:
-    tabla = Table(title=titulo, show_lines=True, expand=True)
-    tabla.add_column("#", justify="right", style="bold")
-    tabla.add_column("Nombre")
-    tabla.add_column("Nota", justify="right")
+    # NUEVO: estilos de tabla coherentes
+    tabla = Table(
+        title=titulo,
+        show_lines=True,
+        expand=True,
+        box=ROUNDED,
+        header_style="label",
+        title_style="label",
+    )
+    tabla.add_column("#", justify="right", style="label", no_wrap=True)
+    tabla.add_column("Nombre", style="value")
+    tabla.add_column("Nota", justify="right", style="value")
     vacio = True
     for indice, (nombre, nota) in enumerate(items, start=1):
         vacio = False
@@ -107,13 +143,13 @@ def _tabla_estudiantes(
 
 
 def _panel_resumen(total: int, aprobados: int, nota_minima: float) -> Panel:
+    # NUEVO: resumen con estilos del tema
     texto = (
-        f"[bold white]Total:[/bold white] {total}\n"
-        f"[bold green]Aprobados (>= {nota_minima:.2f}):[/bold green] "
-        f"{aprobados}\n"
-        f"[bold red]No aprobados:[/bold red] {total - aprobados}"
+        f"[label]Total:[/label] [value]{total}[/value]\n"
+        f"[success]Aprobados (>= {nota_minima:.2f}):[/success] [value]{aprobados}[/value]\n"
+        f"[error]No aprobados:[/error] [value]{total - aprobados}[/value]"
     )
-    return Panel.fit(texto, title="Resumen", border_style="green")
+    return Panel.fit(texto, title="Resumen", border_style="success", box=ROUNDED)
 
 
 def _parse_estudiantes(texto: str) -> list[tuple[str, float]]:

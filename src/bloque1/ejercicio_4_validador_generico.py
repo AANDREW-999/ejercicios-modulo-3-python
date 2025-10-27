@@ -9,6 +9,11 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import IntPrompt, Prompt
 from rich.table import Table
+from rich.align import Align
+from rich.rule import Rule
+from rich.text import Text
+from rich.box import HEAVY, ROUNDED, DOUBLE
+from rich.theme import Theme
 
 __all__ = [
     "aplicar_validador",
@@ -18,7 +23,24 @@ __all__ = [
     "main",
 ]
 
-console = Console()
+# NUEVO: tema y consola estilizada
+THEME = Theme(
+    {
+        "title": "bold cyan",
+        "subtitle": "dim",
+        "accent": "magenta",
+        "menu.border": "blue",
+        "menu.number": "bold cyan",
+        "menu.option": "bold white",
+        "label": "bold white",
+        "value": "bright_white",
+        "success": "green",
+        "warning": "yellow",
+        "error": "red",
+        "info": "cyan",
+    }
+)
+console = Console(theme=THEME)
 T = TypeVar("T")
 
 
@@ -98,15 +120,17 @@ def _panel_titulo() -> Panel:
     Returns:
         Panel con título y subtítulo del ejercicio.
     """
-    texto = (
-        "[bold cyan]Validador de Datos Genérico[/bold cyan]\n"
-        "[dim]Funciones de orden superior + Rich UI[/dim]"
-    )
-    return Panel.fit(
-        texto,
+    # NUEVO: cabecera centrada y caja doble
+    titulo = Text(" Validador de Datos Genérico ", style="title")
+    sub = Text("Funciones de orden superior + Rich UI", style="subtitle")
+    cuerpo = Align.center(Text.assemble(titulo, "\n", sub))
+    return Panel(
+        cuerpo,
         title="Ejercicio 4",
         subtitle="Callable, Type Hints",
-        border_style="cyan",
+        border_style="accent",
+        box=DOUBLE,
+        padding=(1, 2),
     )
 
 
@@ -119,13 +143,19 @@ def _panel_menu() -> Panel:
     Returns:
         Panel con las opciones disponibles.
     """
+    # NUEVO: opciones coloreadas y caja pesada
     texto = (
-        "[bold]Opciones[/bold]\n"
-        "1) Validar correos electrónicos\n"
-        "2) Filtrar números mayores a 10\n"
-        "3) Salir"
+        f"[menu.number]1)[/menu.number] [menu.option]Validar correos electrónicos[/menu.option]\n"
+        f"[menu.number]2)[/menu.number] [menu.option]Filtrar números mayores a 10[/menu.option]\n"
+        f"[menu.number]3)[/menu.number] [menu.option]Salir[/menu.option]"
     )
-    return Panel(texto, title="Menú", border_style="blue")
+    return Panel(
+        Align.left(texto),
+        title="Menú",
+        border_style="menu.border",
+        box=HEAVY,
+        padding=(1, 2),
+    )
 
 
 def _tabla_lista(titulo: str, elementos: list[str]) -> Table:
@@ -139,9 +169,16 @@ def _tabla_lista(titulo: str, elementos: list[str]) -> Table:
         Tabla con dos columnas (# y Valor). Si la lista está vacía,
         muestra una fila con guiones.
     """
-    tabla = Table(title=titulo, show_lines=True, expand=True)
-    tabla.add_column("#", justify="right", style="bold")
-    tabla.add_column("Valor", overflow="fold")
+    tabla = Table(
+        title=titulo,
+        show_lines=True,
+        expand=True,
+        box=ROUNDED,
+        header_style="label",
+        title_style="label",
+    )
+    tabla.add_column("#", justify="right", style="label", no_wrap=True)
+    tabla.add_column("Valor", overflow="fold", style="value")
     if not elementos:
         tabla.add_row("—", "—")
         return tabla
@@ -161,11 +198,16 @@ def _panel_resumen(total: int, validos: int) -> Panel:
         Panel con totales de válidos e inválidos.
     """
     texto = (
-        f"[bold white]Total:[/bold white] {total}\n"
-        f"[bold green]Válidos:[/bold green] {validos}\n"
-        f"[bold red]Inválidos:[/bold red] {total - validos}"
+        f"[label]Total:[/label] [value]{total}[/value]\n"
+        f"[success]Válidos:[/success] [value]{validos}[/value]\n"
+        f"[error]Inválidos:[/error] [value]{total - validos}[/value]"
     )
-    return Panel.fit(texto, title="Resumen", border_style="green")
+    return Panel.fit(
+        texto,
+        title="Resumen",
+        border_style="success",
+        box=ROUNDED,
+    )
 
 
 def _parse_csv_texto(texto: str) -> list[str]:
@@ -227,6 +269,7 @@ def menu() -> None:
     while True:
         console.clear()
         console.print(_panel_titulo())
+        console.print(Rule(style="accent"))
         console.print(_panel_menu())
 
         try:
@@ -236,21 +279,21 @@ def menu() -> None:
             )
         except Exception:
             opcion = 3
-        numero_1 = 1
-        numero_2 = 2
-        numero_3 = 3
-        if opcion == numero_1:
+
+        if opcion == 1:
             _flujo_validar_correos()
-        elif opcion == numero_2:
+        elif opcion == 2:
             _flujo_filtrar_mayores()
-        elif opcion == numero_3:
+        elif opcion == 3:
             break
 
-        _ = Prompt.ask(
-            "\n[dim]Enter para continuar (o escribe 'salir' para terminar)[/dim]",
+        # NUEVO: separador y prompt de continuación con estilo
+        console.print(Rule(style="accent"))
+        seguir = Prompt.ask(
+            "[dim]Enter para continuar (o escribe 'salir' para terminar)[/dim]",
             default="",
         )
-        if _.strip().lower() == "salir":
+        if seguir.strip().lower() == "salir":
             break
 
 
@@ -263,7 +306,7 @@ def _flujo_validar_correos() -> None:
     Returns:
         None
     """
-    console.rule("[bold]Validación de correos[/bold]")
+    console.print(Rule(Text(" Validación de correos ", style="title"), style="accent"))
     entrada = Prompt.ask(
         "Ingresa correos separados por comas",
         default="ana@mail.com, malo, user@dominio.com",
@@ -277,7 +320,8 @@ def _flujo_validar_correos() -> None:
         _tabla_lista("Inválidos", no_validos),
         _panel_resumen(len(correos), len(validos)),
     ]
-    console.print(Columns(paneles, equal=True))
+    # NUEVO: enmarca los paneles para mayor cohesión visual
+    console.print(Panel(Columns(paneles, equal=True, expand=True), border_style="accent", box=ROUNDED))
 
 
 def _flujo_filtrar_mayores() -> None:
@@ -289,7 +333,7 @@ def _flujo_filtrar_mayores() -> None:
     Returns:
         None
     """
-    console.rule("[bold]Números mayores a 10[/bold]")
+    console.print(Rule(Text(" Números mayores a 10 ", style="title"), style="accent"))
     entrada = Prompt.ask(
         "Ingresa números enteros separados por comas",
         default="4, 11, 9, 25, x, 10, 13",
@@ -305,13 +349,14 @@ def _flujo_filtrar_mayores() -> None:
     ]
     if tokens_invalidos:
         aviso = Panel(
-            f"[yellow]Ignorados:[/yellow] {', '.join(tokens_invalidos)}",
+            f"[warning]Ignorados:[/warning] [value]{', '.join(tokens_invalidos)}[/value]",
             title="Tokens no numéricos",
-            border_style="yellow",
+            border_style="warning",
+            box=ROUNDED,
         )
         paneles.append(aviso)
 
-    console.print(Columns(paneles, equal=True))
+    console.print(Panel(Columns(paneles, equal=True, expand=True), border_style="accent", box=ROUNDED))
 
 
 def main() -> None:

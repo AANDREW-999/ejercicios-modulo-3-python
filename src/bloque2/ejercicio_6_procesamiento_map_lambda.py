@@ -7,10 +7,32 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import FloatPrompt, IntPrompt, Prompt
 from rich.table import Table
+# NUEVO: estilos y cajas
+from rich.align import Align
+from rich.text import Text
+from rich.box import HEAVY, ROUNDED, DOUBLE
+from rich.theme import Theme
 
 __all__ = ["extraer_precios_con_descuento", "menu", "main"]
 
-console = Console()
+# NUEVO: tema para Ejercicio 6 (azul/celeste)
+THEME = Theme(
+    {
+        "title": "bold deep_sky_blue3",
+        "subtitle": "dim",
+        "accent": "deep_sky_blue3",
+        "menu.border": "blue",
+        "menu.number": "bold deep_sky_blue3",
+        "menu.option": "bold white",
+        "label": "bold white",
+        "value": "bright_white",
+        "success": "chartreuse3",
+        "warning": "yellow3",
+        "error": "red3",
+        "info": "cyan3",
+    }
+)
+console = Console(theme=THEME)
 
 
 def extraer_precios_con_descuento(
@@ -56,30 +78,47 @@ def extraer_precios_con_descuento(
 
 
 def _panel_titulo() -> Panel:
-    texto = (
-        "[bold cyan]Procesamiento con map y lambda[/bold cyan]\n"
-        "[dim]Extrae precios con descuento desde productos[/dim]"
+    # NUEVO: cabecera centrada y caja doble
+    cuerpo = Align.center(
+        Text.assemble(
+            Text(" Procesamiento con map y lambda ", style="title"),
+            "\n",
+            Text("Extrae precios con descuento desde productos", style="subtitle"),
+        )
     )
-    return Panel.fit(
-        texto, title="Ejercicio 6", subtitle="map + lambda", border_style="cyan"
+    return Panel(
+        cuerpo,
+        title="Ejercicio 6",
+        subtitle="map + lambda",
+        border_style="accent",
+        box=DOUBLE,
+        padding=(1, 2),
     )
 
 
 def _panel_menu() -> Panel:
+    # NUEVO: opciones coloreadas y caja pesada
     texto = (
-        "[bold]Opciones[/bold]\n"
-        "1) Ejecutar ejemplo por defecto (10% de descuento)\n"
-        "2) Ingresar productos y descuento personalizado\n"
-        "3) Salir"
+        f"[menu.number]1)[/menu.number] [menu.option]Ejemplo por defecto (10% de descuento)[/menu.option]\n"
+        f"[menu.number]2)[/menu.number] [menu.option]Productos y descuento personalizado[/menu.option]\n"
+        f"[menu.number]3)[/menu.number] [menu.option]Salir[/menu.option]"
     )
-    return Panel(texto, title="Menú", border_style="magenta")
+    return Panel(texto, title="Menú", border_style="menu.border", box=HEAVY)
 
 
 def _tabla_productos(productos: list[dict[str, Any]]) -> Table:
-    tabla = Table(title="Productos", show_lines=True, expand=True)
-    tabla.add_column("#", justify="right", style="bold")
-    tabla.add_column("Nombre")
-    tabla.add_column("Precio", justify="right")
+    # NUEVO: estilos de tabla coherentes
+    tabla = Table(
+        title="Productos",
+        show_lines=True,
+        expand=True,
+        box=ROUNDED,
+        header_style="label",
+        title_style="label",
+    )
+    tabla.add_column("#", justify="right", style="label", no_wrap=True)
+    tabla.add_column("Nombre", style="value")
+    tabla.add_column("Precio", justify="right", style="value")
     if not productos:
         tabla.add_row("—", "—", "—")
         return tabla
@@ -95,9 +134,12 @@ def _tabla_precios(precios: list[float], descuento: float) -> Table:
         title=f"Precios con descuento ({descuento*100:.0f}%)",
         show_lines=True,
         expand=True,
+        box=ROUNDED,
+        header_style="label",
+        title_style="label",
     )
-    tabla.add_column("#", justify="right", style="bold")
-    tabla.add_column("Precio descontado", justify="right")
+    tabla.add_column("#", justify="right", style="label", no_wrap=True)
+    tabla.add_column("Precio descontado", justify="right", style="value")
     if not precios:
         tabla.add_row("—", "—")
         return tabla

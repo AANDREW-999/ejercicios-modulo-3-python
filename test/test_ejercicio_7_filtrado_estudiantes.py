@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import pytest
-from modulo3.ejercicio_7_filtrado_estudiantes import filtrar_aprobados
+from src.bloque2.ejercicio_7_filtrado_estudiantes import filtrar_aprobados
 
 
 def test_ejemplo_por_defecto() -> None:

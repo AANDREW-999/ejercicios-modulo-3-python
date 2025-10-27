@@ -8,6 +8,11 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Prompt
 from rich.table import Table
+# NUEVO: estilos y cajas
+from rich.align import Align
+from rich.text import Text
+from rich.box import HEAVY, ROUNDED, DOUBLE
+from rich.theme import Theme
 
 __all__ = [
     "palabras_mayusculas_largas",
@@ -16,7 +21,24 @@ __all__ = [
     "main",
 ]
 
-console = Console()
+# NUEVO: tema para Ejercicio 8 (naranja/dorado)
+THEME = Theme(
+    {
+        "title": "bold orange3",
+        "subtitle": "dim",
+        "accent": "orange3",
+        "menu.border": "gold3",
+        "menu.number": "bold orange3",
+        "menu.option": "bold white",
+        "label": "bold white",
+        "value": "bright_white",  # corregido (antes: "bright white")
+        "success": "green3",
+        "warning": "yellow3",
+        "error": "red3",
+        "info": "cyan3",
+    }
+)
+console = Console(theme=THEME)
 
 _PATRON_PALABRA = re.compile(r"[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+")
 
@@ -62,32 +84,44 @@ def longitudes_por_palabra(palabras: Iterable[str]) -> dict[str, int]:
 
 
 def _panel_titulo() -> Panel:
-    texto = (
-        "[bold cyan]Transformación con Comprehensions[/bold cyan]\n"
-        "[dim]List + Dict Comprehensions sobre un texto[/dim]"
+    # NUEVO: cabecera centrada y caja doble
+    cuerpo = Align.center(
+        Text.assemble(
+            Text(" Transformación con Comprehensions ", style="title"),
+            "\n",
+            Text("List + Dict Comprehensions sobre un texto", style="subtitle"),
+        )
     )
-    return Panel.fit(
-        texto,
+    return Panel(
+        cuerpo,
         title="Ejercicio 8",
         subtitle="split, upper, filter por longitud",
-        border_style="cyan",
+        border_style="accent",
+        box=DOUBLE,
+        padding=(1, 2),
     )
 
 
 def _panel_menu() -> Panel:
+    # NUEVO: opciones coloreadas y caja pesada
     texto = (
-        "[bold]Opciones[/bold]\n"
-        "1) Ejecutar ejemplo por defecto\n"
-        "2) Ingresar texto personalizado\n"
-        "3) Salir"
+        f"[menu.number]1)[/menu.number] [menu.option]Ejemplo por defecto[/menu.option]\n"
+        f"[menu.number]2)[/menu.number] [menu.option]Texto personalizado[/menu.option]\n"
+        f"[menu.number]3)[/menu.number] [menu.option]Salir[/menu.option]"
     )
-    return Panel(texto, title="Menú", border_style="magenta")
+    return Panel(texto, title="Menú", border_style="menu.border", box=HEAVY)
 
 
 def _tabla_palabras(palabras: list[str]) -> Table:
-    tabla = Table(title="Palabras MAYÚSCULAS (> 5 letras)", show_lines=True)
-    tabla.add_column("#", justify="right", style="bold")
-    tabla.add_column("Palabra", justify="left", overflow="fold")
+    tabla = Table(
+        title="Palabras MAYÚSCULAS (> 5 letras)",
+        show_lines=True,
+        box=ROUNDED,
+        header_style="label",
+        title_style="label",
+    )
+    tabla.add_column("#", justify="right", style="label", no_wrap=True)
+    tabla.add_column("Palabra", justify="left", overflow="fold", style="value")
     if not palabras:
         tabla.add_row("—", "—")
         return tabla
@@ -97,9 +131,15 @@ def _tabla_palabras(palabras: list[str]) -> Table:
 
 
 def _tabla_longitudes(mapa: dict[str, int]) -> Table:
-    tabla = Table(title="Longitudes por palabra", show_lines=True)
-    tabla.add_column("Palabra", style="bold")
-    tabla.add_column("Longitud", justify="right")
+    tabla = Table(
+        title="Longitudes por palabra",
+        show_lines=True,
+        box=ROUNDED,
+        header_style="label",
+        title_style="label",
+    )
+    tabla.add_column("Palabra", style="label")
+    tabla.add_column("Longitud", justify="right", style="value")
     if not mapa:
         tabla.add_row("—", "—")
         return tabla
