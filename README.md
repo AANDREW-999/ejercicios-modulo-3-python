@@ -25,7 +25,7 @@
 ## ⚡ Ejecución rápida
 - Ejecutar el ejercicio de IMC:
 ```bash
-python -m modulo3.ejercicio_1_refactorizacion_calculadora_imc
+python -m bloque1.ejercicio_1_refactorizacion_calculadora_imc
 ```
 
 - Ejecutar pruebas:
