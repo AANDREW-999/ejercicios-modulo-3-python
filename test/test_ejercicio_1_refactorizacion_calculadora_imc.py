@@ -4,7 +4,7 @@ import math
 
 import pytest
 
-from src.modulo3.ejercicio_1_refactorizacion_calculadora_imc import (
+from src.bloque1.ejercicio_1_refactorizacion_calculadora_imc import (
     calcular_imc,
     interpretar_imc,
 )

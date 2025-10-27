@@ -1,6 +1,6 @@
 import pytest
 
-from src.modulo3.ejercicio_2_generador_perfiles import crear_perfil
+from src.bloque1.ejercicio_2_generador_perfiles import crear_perfil
 
 
 def test_perfil_completo() -> None:

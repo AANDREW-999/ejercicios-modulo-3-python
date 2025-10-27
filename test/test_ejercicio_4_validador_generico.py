@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from src.modulo3.ejercicio_4_validador_generico import (
+from src.bloque1.ejercicio_4_validador_generico import (
     aplicar_validador,
     es_email_valido,
     es_mayor_a_10,

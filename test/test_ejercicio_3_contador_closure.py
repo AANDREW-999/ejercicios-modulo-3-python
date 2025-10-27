@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from src.modulo3.ejercicio_3_contador_closure import crear_contador
+from src.bloque1.ejercicio_3_contador_closure import crear_contador
 
 
 def test_incrementos_secuenciales() -> None:
