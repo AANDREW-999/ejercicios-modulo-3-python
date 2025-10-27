@@ -9,7 +9,6 @@ limpio y enfocado en el flujo principal.
 from typing import Final
 
 from rich.align import Align
-
 # NUEVO: estilos, tablas y cajas
 from rich.box import HEAVY, ROUNDED
 from rich.console import Console
@@ -19,11 +18,14 @@ from rich.table import Table
 from rich.text import Text
 from rich.theme import Theme
 
+console = Console(theme=Theme({}))
+
 __all__ = [
     "calcular_imc",
     "interpretar_imc",
-    "menu",
+    "menu_interactivo",
     "ejecutar_calculadora_interactiva",
+    "menu",
     "main",
 ]
 
@@ -127,7 +129,7 @@ def _parse_float(value: str) -> float:
         raise ValueError(f"Valor no numérico: '{value}'") from exc
 
 
-def menu(console: Console) -> tuple[float, float] | None:
+def menu_interactivo(console: Console) -> tuple[float, float] | None:
     """Muestra el menú, valida entradas y devuelve peso/altura.
 
     Args:
@@ -157,7 +159,7 @@ def menu(console: Console) -> tuple[float, float] | None:
             opcion = "1"  # Enter toma la opción por defecto
 
         if opcion == "1":
-            # Solicitar peso y altura con validación
+            # Solicitar peso y altura with validación
             while True:
                 try:
                     peso_txt = console.input(
@@ -240,7 +242,7 @@ def ejecutar_calculadora_interactiva(console: Console, **kwargs) -> None:
 
     # Bucle principal: permite repetir cálculos hasta que el usuario salga
     while True:
-        result = menu(console)
+        result = menu_interactivo(console)
         if result is None:
             console.print(
                 Panel.fit(
@@ -253,8 +255,20 @@ def ejecutar_calculadora_interactiva(console: Console, **kwargs) -> None:
             return
 
         peso, altura = result
-        imc = calcular_imc(peso, altura)
-        categoria = interpretar_imc(imc)
+        # NUEVO: atrapar errores en cálculo/interpretación y volver a preguntar
+        try:
+            imc = calcular_imc(peso, altura)
+            categoria = interpretar_imc(imc)
+        except ValueError as err:
+            console.print(
+                Panel.fit(
+                    f"[bold red]Error:[/bold red] {err}",
+                    title="Entrada inválida",
+                    border_style="red",
+                    box=ROUNDED,
+                )
+            )
+            continue  # vuelve a preguntar
 
         color_style = estilo_categoria.get(categoria, "value")
         titulo = "IMC" if mostrar_titulo else None
@@ -318,12 +332,11 @@ def ejecutar_calculadora_interactiva(console: Console, **kwargs) -> None:
             )
 
 
-def main() -> None:
+def menu() -> None:
     """Punto de entrada del script cuando se ejecuta como programa.
 
     Inicializa la consola, delega en el menú y muestra el resultado del IMC.
     """
-    # NUEVO: consola con tema
     console = Console(theme=THEME)
     try:
         ejecutar_calculadora_interactiva(console)
@@ -335,4 +348,25 @@ def main() -> None:
                 border_style="red",
                 box=ROUNDED,
             )
+        )
+
+
+def main() -> None:
+    """Punto de entrada: invoca el menú.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+    menu()
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        console.print(
+            "\n\n[bold red]Programa interrumpido por el usuario. Adiós.[/bold red]"
         )
