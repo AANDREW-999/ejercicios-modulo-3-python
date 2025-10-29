@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from rich.columns import Columns
 
 import src.bloque3.ejercicio_13_gestor_inventario_json as inv
 
@@ -28,27 +29,34 @@ def test_guardar_y_cargar_persistencia(tmp_path: Path) -> None:
 
     # Relee desde disco
     leido = inv.cargar_inventario(ruta=ruta)
-    assert len(leido) == 2
+    esperados = ["Camisa", "Pantalón"]
+    assert len(leido) == len(esperados)
     nombres = sorted([p["nombre"] for p in leido])
-    assert nombres == ["Camisa", "Pantalón"]
+    assert nombres == esperados
 
     # Verificar formato JSON persistido (dos objetos)
     datos_json = _leer_json(ruta)
-    assert isinstance(datos_json, list) and len(datos_json) == 2
+    assert isinstance(datos_json, list) and len(datos_json) == len(esperados)
 
 
 def test_agregar_existente_acumula_y_actualiza_precio(tmp_path: Path) -> None:
     ruta = tmp_path / "inventario.json"
     inventario: list[dict[str, Any]] = []
     inv.agregar_producto(inventario, "camisa", 100.0, 5, ruta=ruta)
-    actualizado = inv.agregar_producto(inventario, "CAMISA", 120.0, 1, ruta=ruta)
-    assert actualizado["precio"] == 120.0
-    assert actualizado["stock"] == 6
+    actualizado = inv.agregar_producto(
+        inventario, "CAMISA", 120.0, 1, ruta=ruta
+    )
+    precio_esperado = 120.0
+    stock_esperado = 5 + 1
+    assert actualizado["precio"] == precio_esperado
+    assert actualizado["stock"] == stock_esperado
     # Asegura que solo hay un registro para "Camisa"
     leido = inv.cargar_inventario(ruta=ruta)
-    assert len(leido) == 1 and leido[0]["nombre"] == "camisa".title() or leido[0][
-        "nombre"
-    ] == "camisa" or leido[0]["nombre"] == "CAMISA"
+    assert len(leido) == 1 and leido[0]["nombre"] in {
+        "camisa".title(),
+        "camisa",
+        "CAMISA",
+    }
 
 
 def test_vender_producto_y_validaciones(tmp_path: Path) -> None:
@@ -84,8 +92,7 @@ def test_filtrar_disponibles_usa_filter_lambda(tmp_path: Path) -> None:
 
 
 def test_mostrar_inventario_devuelve_tabla(tmp_path: Path, monkeypatch) -> None:
-    # No vamos a imprimir realmente en consola; solo queremos que la función
-    # construya una tabla. Interceptamos console.print para capturar.
+    # No imprimimos realmente; solo validamos que construye algo renderizable.
     ruta = tmp_path / "inventario.json"
     inventario: list[dict[str, Any]] = []
     inv.agregar_producto(inventario, "X", 10.0, 1, ruta=ruta)
@@ -98,9 +105,6 @@ def test_mostrar_inventario_devuelve_tabla(tmp_path: Path, monkeypatch) -> None:
     monkeypatch.setattr(inv.console, "print", _fake_print)
     inv.mostrar_inventario(inventario, solo_disponibles=False)
 
-    # Columns contiene una colección, pero validamos que dentro haya una Table
-    from rich.columns import Columns
-
+    # Columns contiene una colección; validamos que el objeto sea Columns.
     assert isinstance(capturado["obj"], Columns)
-    # No fallará si cambia el orden, pero al menos verifica que hay objetos renderizables
-    # No es trivial introspectar Columns; suficiente con validar que no explotó.
+    # No es trivial introspectar Columns; basta con que no haya explotado.

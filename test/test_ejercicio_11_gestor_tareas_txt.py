@@ -17,12 +17,12 @@ def test_agregar_y_ver_tareas(tmp_path: Path) -> None:
     agregar_tarea(" Comprar pan  ", ruta=ruta)
     agregar_tarea("Estudiar Python", ruta=ruta)
     assert ver_tareas(ruta) == ["Comprar pan", "Estudiar Python"]
-
+    numero_2 = 2
     # Verifica que realmente hay dos líneas con salto al final.
     contenido = ruta.read_text(encoding="utf-8")
     lineas = contenido.splitlines(keepends=True)
-    assert len(lineas) == 2
-    assert all(l.endswith("\n") for l in lineas)
+    assert len(lineas) == numero_2
+    assert all(linea.endswith("\n") for linea in lineas)
 
 
 def test_crea_carpeta_si_no_existe(tmp_path: Path) -> None:

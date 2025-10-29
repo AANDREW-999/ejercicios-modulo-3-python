@@ -188,11 +188,16 @@ def _panel_menu() -> Panel:
     """
     texto = (
         "[menu.title]Opciones[/menu.title]\n"
-        "[menu.key]1)[/menu.key] [menu.option]Ejecutar ejemplo por defecto (data/estudiantes.csv)[/menu.option]\n"
-        "[menu.key]2)[/menu.key] [menu.option]Analizar archivo y columna personalizados[/menu.option]\n"
+        "[menu.key]1)[/menu.key] "
+        "[menu.option]Ejecutar ejemplo por defecto "
+        "(data/estudiantes.csv)[/menu.option]\n"
+        "[menu.key]2)[/menu.key] "
+        "[menu.option]Analizar archivo y columna personalizados[/menu.option]\n"
         "[menu.key]3)[/menu.key] [menu.option]Salir[/menu.option]"
     )
-    return Panel(texto, title="[accent]Menú[/accent]", border_style="menu.border", box=box.HEAVY)
+    return Panel(
+        texto, title="[accent]Menú[/accent]", border_style="menu.border"
+        , box=box.HEAVY)
 
 
 def _tabla_resultados(
@@ -314,7 +319,8 @@ def _flujo_personalizado() -> None:
         None
     """
     nombre = Prompt.ask(
-        "[accent]Nombre de archivo[/accent] [muted](se buscará en data/ si no es una ruta)[/muted]",
+        "[accent]Nombre de archivo[/accent] "
+        "[muted](se buscará en data/ si no es una ruta)[/muted]",
         default="estudiantes.csv",
     )
     columna = Prompt.ask("[accent]Columna a analizar[/accent]", default="calificacion")

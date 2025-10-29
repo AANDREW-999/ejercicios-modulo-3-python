@@ -138,7 +138,8 @@ def _panel_titulo() -> Panel:
     """
     texto = (
         "[title]Explorador Recursivo de Estructuras[/title]\n"
-        "[muted]Recorre listas/dicts anidados y lista valores atómicos con su profundidad[/muted]"
+        "[muted]Recorre listas/dicts anidados y "
+        "lista valores atómicos con su profundidad[/muted]"
     )
     return Panel.fit(
         texto,
@@ -157,11 +158,16 @@ def _panel_menu() -> Panel:
     """
     texto = (
         "[menu.title]Opciones[/menu.title]\n"
-        "[menu.key]1)[/menu.key] [menu.option]Ejecutar ejemplo por defecto[/menu.option]\n"
-        "[menu.key]2)[/menu.key] [menu.option]Ingresar estructura personalizada (literal Python)[/menu.option]\n"
+        "[menu.key]1)[/menu.key] "
+        "[menu.option]Ejecutar ejemplo por defecto[/menu.option]\n"
+        "[menu.key]2)[/menu.key] [menu.option]"
+        "Ingresar estructura personalizada (literal Python)[/menu.option]\n"
         "[menu.key]3)[/menu.key] [menu.option]Salir[/menu.option]"
     )
-    return Panel(texto, title="[accent]Menú[/accent]", border_style="menu.border", box=box.ROUNDED)
+    return Panel(
+        texto, title="[accent]Menú[/accent]"
+        , border_style="menu.border"
+        , box=box.ROUNDED)
 
 
 def _tabla_resultados(pares: list[tuple[Any, int]]) -> Table:
@@ -211,7 +217,10 @@ def _panel_resumen(pares: list[tuple[Any, int]]) -> Panel:
         f"[title]Total atómicos:[/title] [ok]{total}[/ok]\n"
         f"[title]Profundidad máxima:[/title] [accent]{maximo}[/accent]"
     )
-    return Panel.fit(texto, title="[accent]Resumen[/accent]", border_style="menu.border", box=box.ROUNDED)
+    return Panel.fit(
+        texto, title="[accent]Resumen[/accent]"
+        , border_style="menu.border"
+        , box=box.ROUNDED)
 
 
 def _flujo_ejemplo() -> None:

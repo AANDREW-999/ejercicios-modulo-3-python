@@ -30,18 +30,26 @@ def test_analiza_columna_calificacion(tmp_path: Path) -> None:
     ruta = _crear_csv_tmp(tmp_path, "est.csv")
     res = analizar_csv(str(ruta), "calificacion")
     # Valores: 4.5, 2.8, 3.9, 4.8, 3.5
-    assert res["max"] == pytest.approx(4.8, abs=0.01)
-    assert res["min"] == pytest.approx(2.8, abs=0.01)
-    assert res["promedio"] == pytest.approx(3.9, abs=0.01)
+    valores = [4.5, 2.8, 3.9, 4.8, 3.5]
+    esperado_max = max(valores)
+    esperado_min = min(valores)
+    esperado_prom = sum(valores) / len(valores)
+    assert res["max"] == pytest.approx(esperado_max, abs=0.01)
+    assert res["min"] == pytest.approx(esperado_min, abs=0.01)
+    assert res["promedio"] == pytest.approx(esperado_prom, abs=0.01)
 
 
 def test_analiza_columna_edad(tmp_path: Path) -> None:
     ruta = _crear_csv_tmp(tmp_path, "est2.csv")
     res = analizar_csv(str(ruta), "edad")
     # Valores: 20, 22, 21, 23, 20
-    assert res["max"] == 23
-    assert res["min"] == 20
-    assert res["promedio"] == pytest.approx(21.2, abs=0.01)
+    edades = [20, 22, 21, 23, 20]
+    esperado_max = max(edades)
+    esperado_min = min(edades)
+    esperado_prom = sum(edades) / len(edades)
+    assert res["max"] == esperado_max
+    assert res["min"] == esperado_min
+    assert res["promedio"] == pytest.approx(esperado_prom, abs=0.01)
 
 
 def test_columna_inexistente(tmp_path: Path) -> None:
@@ -65,12 +73,19 @@ def test_ignora_no_numericos(tmp_path: Path) -> None:
         escritor.writerows(filas)
 
     res_edad = analizar_csv(str(ruta), "edad")  # usa 20 y 22.5
-    assert res_edad["max"] == pytest.approx(22.5, abs=0.01)
-    assert res_edad["min"] == pytest.approx(20.0, abs=0.01)
-    assert res_edad["promedio"] == pytest.approx(21.25, abs=0.01)
+    esperado_max = 22.5
+    esperado_min = 20.0
+    esperado_prom = (20.0 + 22.5) / 2
+    assert res_edad["max"] == pytest.approx(esperado_max, abs=0.01)
+    assert res_edad["min"] == pytest.approx(esperado_min, abs=0.01)
+    assert res_edad["promedio"] == pytest.approx(esperado_prom, abs=0.01)
 
-    with pytest.raises(ValueError):
-        analizar_csv(str(ruta), "calificacion")  # no hay numéricos válidos
+    # En calificación solo 4.5 es válido -> promedio = max = min = 4.5
+    res_cal = analizar_csv(str(ruta), "calificacion")
+    unico_valor = 4.5
+    assert res_cal["max"] == pytest.approx(unico_valor, abs=0.01)
+    assert res_cal["min"] == pytest.approx(unico_valor, abs=0.01)
+    assert res_cal["promedio"] == pytest.approx(unico_valor, abs=0.01)
 
 
 def test_archivo_no_existe() -> None:

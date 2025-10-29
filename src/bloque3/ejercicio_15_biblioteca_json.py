@@ -19,13 +19,13 @@ import json
 from pathlib import Path
 from typing import Any
 
+from rich import box
 from rich.columns import Columns
 from rich.console import Console
 from rich.panel import Panel
-from rich.prompt import Confirm, Prompt
+from rich.prompt import Prompt
 from rich.table import Table
 from rich.theme import Theme
-from rich import box
 
 __all__ = [
     "cargar_biblioteca",
@@ -242,9 +242,10 @@ def guardar_biblioteca(
         ValueError: Si algún libro no pasa la validación.
         OSError: Si ocurre un error de E/S al escribir.
     """
+
     if not isinstance(biblioteca, list):
         raise TypeError("biblioteca debe ser una lista de libros.")
-    normalizados = [_validar_libro_dict(l) for l in biblioteca]
+    normalizados = [_validar_libro_dict(_) for _ in biblioteca]
 
     archivo = _ruta_biblioteca(ruta)
     archivo.parent.mkdir(parents=True, exist_ok=True)
@@ -345,7 +346,7 @@ def buscar_libro(
 
     return list(
         filter(
-            lambda l: consulta in str(l.get("titulo", "")).casefold(),
+            lambda _: consulta in str(_.get("titulo", "")).casefold(),
             biblioteca,
         )
     )
@@ -364,8 +365,8 @@ def ver_libros_prestados(biblioteca: list[dict[str, Any]]) -> list[dict[str, Any
     """
     return list(
         filter(
-            lambda l: (l.get("prestado_a") is not None)
-            and bool(str(l.get("prestado_a")).strip()),
+            lambda _: (_.get("prestado_a") is not None)
+            and bool(str(_.get("prestado_a")).strip()),
             biblioteca,
         )
     )
@@ -413,7 +414,8 @@ def _panel_menu() -> Panel:
         "[menu.key]5)[/menu.key] [menu.option]Devolver libro[/menu.option]\n"
         "[menu.key]6)[/menu.key] [menu.option]Salir[/menu.option]"
     )
-    return Panel(texto, title="[accent]Menú[/accent]", border_style="menu.border", box=box.HEAVY)
+    return Panel(texto, title="[accent]Menú[/accent]"
+                 , border_style="menu.border", box=box.HEAVY)
 
 
 def _tabla_libros(libros: list[dict[str, Any]], titulo: str) -> Table:
@@ -442,8 +444,8 @@ def _tabla_libros(libros: list[dict[str, Any]], titulo: str) -> Table:
     if not libros:
         tabla.add_row("—", "—", "—", "—")
         return tabla
-    for idx, l in enumerate(libros, start=1):
-        tabla.add_row(str(idx), l["libro_id"], l["titulo"], str(l["prestado_a"]))
+    for idx, _ in enumerate(libros, start=1):
+        tabla.add_row(str(idx), _["libro_id"], _["titulo"], str(_["prestado_a"]))
     return tabla
 
 
@@ -491,7 +493,8 @@ def _asegurar_ejemplo() -> None:
         return
     ejemplo = [
         {"libro_id": "001", "titulo": "Cien Años de Soledad", "prestado_a": None},
-        {"libro_id": "002", "titulo": "El Amor en los Tiempos del Cólera", "prestado_a": None},
+        {"libro_id": "002", "titulo":
+            "El Amor en los Tiempos del Cólera", "prestado_a": None},
         {"libro_id": "003", "titulo": "La Ciudad y los Perros", "prestado_a": None},
         {"libro_id": "004", "titulo": "Rayuela", "prestado_a": None},
     ]
@@ -536,7 +539,8 @@ def menu() -> None:
             mostrar_libros(ver_libros_prestados(biblioteca), "Prestados")
 
         elif opcion == "3":
-            q = Prompt.ask("[accent]Título o parte del título a buscar[/accent]").strip()
+            q = Prompt.ask("[accent]Título o parte "
+                           "del título a buscar[/accent]").strip()
             mostrar_libros(buscar_libro(biblioteca, q), f"Búsqueda: {q}")
 
         elif opcion == "4":
@@ -546,7 +550,8 @@ def menu() -> None:
                 libro = prestar_libro(biblioteca, libro_id, aprendiz)
                 console.print(
                     Panel.fit(
-                        f"[ok]★ Préstamo registrado:[/ok] {libro['titulo']} -> [accent]{libro['prestado_a']}[/accent]",
+                        f"[ok]★ Préstamo registrado:[/ok] {libro['titulo']}"
+                        f" -> [accent]{libro['prestado_a']}[/accent]",
                         border_style="ok",
                         title="[accent]OK[/accent]",
                         box=box.ROUNDED,

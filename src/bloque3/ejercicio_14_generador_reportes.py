@@ -20,13 +20,13 @@ import json
 from pathlib import Path
 from typing import Any
 
+from rich import box
 from rich.columns import Columns
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Confirm, Prompt
 from rich.table import Table
 from rich.theme import Theme
-from rich import box
 
 __all__ = [
     "leer_csv_estudiantes",
@@ -260,12 +260,17 @@ def _panel_menu() -> Panel:
     """
     texto = (
         "[menu.title]Opciones[/menu.title]\n"
-        "[menu.key]1)[/menu.key] [menu.option]Ejecutar ejemplo por defecto (data/estudiantes.csv y cursos.json)[/menu.option]\n"
-        "[menu.key]2)[/menu.key] [menu.option]Usar archivos personalizados[/menu.option]\n"
-        "[menu.key]3)[/menu.key] [menu.option]Ver reporte actual (data/reporte.txt)[/menu.option]\n"
+        "[menu.key]1)[/menu.key] "
+        "[menu.option]Ejecutar ejemplo por defecto "
+        "(data/estudiantes.csv y cursos.json)[/menu.option]\n"
+        "[menu.key]2)[/menu.key] "
+        "[menu.option]Usar archivos personalizados[/menu.option]\n"
+        "[menu.key]3)[/menu.key] "
+        "[menu.option]Ver reporte actual (data/reporte.txt)[/menu.option]\n"
         "[menu.key]4)[/menu.key] [menu.option]Salir[/menu.option]"
     )
-    return Panel(texto, title="[accent]Menú[/accent]", border_style="menu.border", box=box.HEAVY)
+    return Panel(texto, title="[accent]Menú[/accent]", border_style="menu.border"
+                 , box=box.HEAVY)
 
 
 def _tabla_reporte(contenido: str) -> Table:
@@ -311,7 +316,8 @@ def _panel_info_archivos(csv_path: Path, json_path: Path) -> Panel:
         f"[muted]JSON:[/muted] [accent]{json_path}[/accent]\n"
         f"[muted]Reporte destino:[/muted] [accent]{_ARCH_REP_DEF}[/accent]"
     )
-    return Panel.fit(texto, title="[accent]Ubicaciones[/accent]", border_style="menu.border", box=box.ROUNDED)
+    return Panel.fit(texto, title="[accent]Ubicaciones[/accent]"
+                     , border_style="menu.border", box=box.ROUNDED)
 
 
 def _asegurar_datos_ejemplo() -> tuple[Path, Path]:
@@ -415,7 +421,8 @@ def menu() -> None:
         if opcion == "1":
             csv_path, json_path = _asegurar_datos_ejemplo()
             contenido = _generar_y_mostrar(csv_path, json_path)
-            if Confirm.ask("¿Guardar en [accent]data/reporte.txt[/accent]?", default=True):
+            if Confirm.ask("¿Guardar en [accent]data/reporte.txt[/accent]?"
+                    , default=True):
                 _guardar_reporte(contenido)
                 console.print(
                     Panel.fit(
@@ -439,7 +446,8 @@ def menu() -> None:
                 csv_path = _resolver_en_data(nombre_csv)
                 json_path = _resolver_en_data(nombre_json)
                 contenido = _generar_y_mostrar(csv_path, json_path)
-                if Confirm.ask("¿Guardar en [accent]data/reporte.txt[/accent]?", default=True):
+                if Confirm.ask("¿Guardar en [accent]data/reporte.txt[/accent]?"
+                        , default=True):
                     _guardar_reporte(contenido)
                     console.print(
                         Panel.fit(

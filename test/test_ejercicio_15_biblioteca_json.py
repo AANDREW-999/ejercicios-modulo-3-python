@@ -11,22 +11,30 @@ import src.bloque3.ejercicio_15_biblioteca_json as bib
 
 def _guardar_tmp(path: Path, libros: list[dict[str, Any]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(libros, ensure_ascii=False, indent=2), encoding="utf-8")
+    path.write_text(
+        json.dumps(libros, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
 
 
 def test_cargar_y_guardar_biblioteca(tmp_path: Path) -> None:
     ruta = tmp_path / "biblioteca.json"
     libros = [
         {"libro_id": "001", "titulo": "Rayuela", "prestado_a": None},
-        {"libro_id": "002", "titulo": "Cien años de soledad", "prestado_a": None},
+        {
+            "libro_id": "002",
+            "titulo": "Cien años de soledad",
+            "prestado_a": None,
+        },
     ]
     _guardar_tmp(ruta, libros)
     cargado = bib.cargar_biblioteca(ruta=ruta)
-    assert len(cargado) == 2
+    esperado_len = len(libros)
+    assert len(cargado) == esperado_len
     # Persistencia tras guardar
     bib.guardar_biblioteca(cargado, ruta=ruta)
-    re = bib.cargar_biblioteca(ruta=ruta)
-    assert re[0]["libro_id"] == "001"
+    reloaded = bib.cargar_biblioteca(ruta=ruta)
+    assert reloaded[0]["libro_id"] == "001"
 
 
 def test_prestar_y_devolver_validaciones(tmp_path: Path) -> None:
@@ -60,16 +68,20 @@ def test_buscar_y_filtrar_prestados(tmp_path: Path) -> None:
     libros = [
         {"libro_id": "1", "titulo": "Python Básico", "prestado_a": "Ana"},
         {"libro_id": "2", "titulo": "JavaScript Avanzado", "prestado_a": None},
-        {"libro_id": "3", "titulo": "Introducción a Bases de Datos", "prestado_a": "Luis"},
+        {
+            "libro_id": "3",
+            "titulo": "Introducción a Bases de Datos",
+            "prestado_a": "Luis",
+        },
     ]
     _guardar_tmp(ruta, libros)
     biblioteca = bib.cargar_biblioteca(ruta=ruta)
 
     encontrados = bib.buscar_libro(biblioteca, "python")
-    assert [l["libro_id"] for l in encontrados] == ["1"]
+    assert [libro["libro_id"] for libro in encontrados] == ["1"]
 
     prestados = bib.ver_libros_prestados(biblioteca)
-    assert sorted([l["libro_id"] for l in prestados]) == ["1", "3"]
+    assert sorted([libro["libro_id"] for libro in prestados]) == ["1", "3"]
 
 
 def test_mostrar_libros_no_revienta(tmp_path: Path, monkeypatch) -> None:

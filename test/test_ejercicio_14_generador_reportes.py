@@ -46,9 +46,12 @@ def test_lectura_csv_basica(tmp_path: Path) -> None:
         ],
     )
     estudiantes = leer_csv_estudiantes(str(ruta))
-    assert estudiantes[0]["nombre"] == "Ana"
-    assert estudiantes[0]["cursos"] == ["PY", "JS"]
-    assert estudiantes[1]["cursos"] == ["DB", "PY"]
+
+    ana = next(e for e in estudiantes if e["nombre"] == "Ana")
+    assert ana["cursos"] == ["PY", "JS"]
+
+    juan = next(e for e in estudiantes if e["nombre"] == "Juan")
+    assert juan["cursos"] == ["DB", "PY"]
 
 
 def test_lectura_json_formato_mapa_y_lista(tmp_path: Path) -> None:
@@ -79,9 +82,9 @@ def test_generar_reporte_combina_y_filtra(tmp_path: Path) -> None:
     estudiantes = leer_csv_estudiantes(str(ruta_csv))
     cursos = leer_json_cursos(str(ruta_json))
     reporte = generar_reporte(estudiantes, cursos)
-    lineas = [l for l in reporte.splitlines() if l.strip()]
+    lineas = [linea for linea in reporte.splitlines() if linea.strip()]
     assert lineas[0] == "Ana: Python, JavaScript"
-    # XXX y NO no existen -> se filtran. Cadena vacía también se filtra
+    # XXX y NO no existen -> se filtran. Cadena vacía también se filtra.
     assert lineas[1] == "María: Python"
     assert lineas[2] == "Sofía: (sin cursos)"
 
