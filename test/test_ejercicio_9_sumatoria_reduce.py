@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pytest
+
 from src.bloque2.ejercicio_9_sumatoria_reduce import (
     concatenar_reduce,
     sumatoria_reduce,
