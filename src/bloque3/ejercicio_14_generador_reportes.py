@@ -262,6 +262,7 @@ def _panel_menu() -> Panel:
         "[menu.title]Opciones[/menu.title]\n"
         "[menu.key]1)[/menu.key] "
         "[menu.option]Ejecutar ejemplo por defecto "
+        ""
         "(data/estudiantes.csv y cursos.json)[/menu.option]\n"
         "[menu.key]2)[/menu.key] "
         "[menu.option]Usar archivos personalizados[/menu.option]\n"
@@ -325,13 +326,59 @@ def _panel_info_archivos(csv_path: Path, json_path: Path) -> Panel:
     )
 
 
-def _asegurar_datos_ejemplo() -> tuple[Path, Path]:
-    """Crea archivos de ejemplo en data/ si no existen.
+def _csv_tiene_encabezados_validos(ruta: Path) -> bool:
+    """Verifica que el CSV tenga los encabezados requeridos: nombre y cursos.
+
+    Args:
+        ruta: Ruta del archivo CSV.
 
     Returns:
-        Tupla con rutas a (CSV, JSON) creados o existentes.
+        True si contiene los encabezados requeridos; False en otro caso.
     """
-    if not _ARCH_CSV_DEF.exists():
+    try:
+        with open(ruta, "r", encoding="utf-8-sig", newline="") as fh:
+            lector = csv.DictReader(fh)
+            if lector.fieldnames is None:
+                return False
+            campos = {c.strip() for c in lector.fieldnames}
+            return {"nombre", "cursos"}.issubset(campos)
+    except OSError:
+        return False
+
+
+def _json_cursos_valido(ruta: Path) -> bool:
+    """Verifica que el JSON de cursos sea parseable a un mapeo id->nombre.
+
+    Args:
+        ruta: Ruta del archivo JSON.
+
+    Returns:
+        True si es válido; False en otro caso.
+    """
+    try:
+        # Reutilizamos el parser real; devolverá dict o lanzará error
+        _ = leer_json_cursos(str(ruta))
+        return True
+    except (OSError, ValueError, json.JSONDecodeError):
+        return False
+
+
+def _asegurar_datos_ejemplo() -> tuple[Path, Path]:
+    """Crea o repara los archivos de ejemplo en data/ si no son válidos.
+
+    Si estudiantes.csv no tiene los encabezados requeridos ('nombre', 'cursos'),
+    se recrea. Si cursos.json no es parseable a un mapeo id->nombre, se recrea.
+
+    Returns:
+        Tupla (ruta_csv, ruta_json) con las rutas a los archivos de ejemplo.
+    """
+    _DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+    # CSV: crear o recrear si los encabezados no son los esperados
+    crear_csv = True
+    if _ARCH_CSV_DEF.exists() and _csv_tiene_encabezados_validos(_ARCH_CSV_DEF):
+        crear_csv = False
+    if crear_csv:
         filas = [
             {"nombre": "Ana", "cursos": "PY;JS"},
             {"nombre": "Juan", "cursos": "DB;JS"},
@@ -342,16 +389,21 @@ def _asegurar_datos_ejemplo() -> tuple[Path, Path]:
             escritor = csv.DictWriter(fh, fieldnames=["nombre", "cursos"])
             escritor.writeheader()
             escritor.writerows(filas)
-    if not _ARCH_JSON_DEF.exists():
+
+    # JSON: crear o recrear si la estructura no es válida
+    crear_json = True
+    if _ARCH_JSON_DEF.exists() and _json_cursos_valido(_ARCH_JSON_DEF):
+        crear_json = False
+    if crear_json:
         cursos = [
             {"id": "PY", "nombre": "Python"},
             {"id": "JS", "nombre": "JavaScript"},
             {"id": "DB", "nombre": "Bases de Datos"},
             {"id": "DATA", "nombre": "Análisis de Datos"},
         ]
-        _DATA_DIR.mkdir(parents=True, exist_ok=True)
         with open(_ARCH_JSON_DEF, "w", encoding="utf-8") as fh:
             json.dump(cursos, fh, ensure_ascii=False, indent=2)
+
     return _ARCH_CSV_DEF, _ARCH_JSON_DEF
 
 
