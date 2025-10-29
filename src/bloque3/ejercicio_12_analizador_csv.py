@@ -17,15 +17,14 @@ from __future__ import annotations
 
 import csv
 from pathlib import Path
-from typing import Any
 
+from rich import box
 from rich.columns import Columns
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Prompt
 from rich.table import Table
 from rich.theme import Theme
-from rich import box
 
 __all__ = ["analizar_csv", "menu", "main"]
 
