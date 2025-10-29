@@ -16,13 +16,13 @@ from __future__ import annotations
 import ast
 from typing import Any, Iterable
 
+from rich import box
 from rich.columns import Columns
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Prompt
 from rich.table import Table
 from rich.theme import Theme
-from rich import box
 
 __all__ = ["explorar_estructura", "filtrar_atomos", "menu", "main"]
 
