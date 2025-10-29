@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 import pytest
-
 from modulo3.ejercicio_9_sumatoria_reduce import (
-    sumatoria_reduce,
     concatenar_reduce,
+    sumatoria_reduce,
 )
 
 

@@ -2,15 +2,15 @@ from __future__ import annotations
 
 from typing import Iterable
 
+# NUEVO: estilos y cajas
+from rich.align import Align
+from rich.box import DOUBLE, HEAVY, ROUNDED
 from rich.columns import Columns
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import FloatPrompt, IntPrompt, Prompt
 from rich.table import Table
-# NUEVO: estilos y cajas
-from rich.align import Align
 from rich.text import Text
-from rich.box import HEAVY, ROUNDED, DOUBLE
 from rich.theme import Theme
 
 __all__ = ["filtrar_aprobados", "menu", "main"]
@@ -110,9 +110,13 @@ def _panel_titulo() -> Panel:
 def _panel_menu() -> Panel:
     # NUEVO: opciones coloreadas y caja pesada
     texto = (
-        f"[menu.number]1)[/menu.number] [menu.option]Ejemplo por defecto (nota mínima 3.0)[/menu.option]\n"
-        f"[menu.number]2)[/menu.number] [menu.option]Lista y nota mínima personalizada[/menu.option]\n"
-        f"[menu.number]3)[/menu.number] [menu.option]Salir[/menu.option]"
+        "[menu.number]1)[/menu.number] "
+        "[menu.option]Ejemplo por defecto (nota mínima 3.0)"
+        "[/menu.option]\n"
+        "[menu.number]2)[/menu.number] "
+        "[menu.option]Lista y nota mínima personalizada[/menu.option]\n"
+        "[menu.number]3)[/menu.number] "
+        "[menu.option]Salir[/menu.option]"
     )
     return Panel(texto, title="Menú", border_style="menu.border", box=HEAVY)
 
@@ -146,7 +150,8 @@ def _panel_resumen(total: int, aprobados: int, nota_minima: float) -> Panel:
     # NUEVO: resumen con estilos del tema
     texto = (
         f"[label]Total:[/label] [value]{total}[/value]\n"
-        f"[success]Aprobados (>= {nota_minima:.2f}):[/success] [value]{aprobados}[/value]\n"
+        f"[success]Aprobados (>= {nota_minima:.2f}):[/success] "
+        f"[value]{aprobados}[/value]\n"
         f"[error]No aprobados:[/error] [value]{total - aprobados}[/value]"
     )
     return Panel.fit(texto, title="Resumen", border_style="success", box=ROUNDED)

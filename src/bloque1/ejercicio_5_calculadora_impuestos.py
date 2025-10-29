@@ -1,14 +1,14 @@
 from __future__ import annotations
 
+from rich.align import Align
+from rich.box import DOUBLE, HEAVY, ROUNDED
 from rich.columns import Columns
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Prompt
-from rich.table import Table
-from rich.align import Align
 from rich.rule import Rule
+from rich.table import Table
 from rich.text import Text
-from rich.box import HEAVY, ROUNDED, DOUBLE
 from rich.theme import Theme
 
 __all__ = [
@@ -93,7 +93,10 @@ def _panel_titulo() -> Panel:
         Text.assemble(
             Text(" Calculadora de Impuestos ", style="title"),
             "\n",
-            Text("Tasa global editable con demostración en vivo", style="subtitle"),
+            Text(
+                "Tasa global editable con demostración en vivo",
+                style="subtitle",
+            ),
         )
     )
     return Panel(
@@ -118,10 +121,14 @@ def _panel_estado() -> Panel:
 
 def _panel_menu() -> Panel:
     texto = (
-        f"[menu.number]1)[/menu.number] [menu.option]Calcular IVA y Total con la tasa actual[/menu.option]\n"
-        f"[menu.number]2)[/menu.number] [menu.option]Actualizar TASA_IVA[/menu.option]\n"
-        f"[menu.number]3)[/menu.number] [menu.option]Demostración Antes/Después[/menu.option]\n"
-        f"[menu.number]4)[/menu.number] [menu.option]Salir[/menu.option]"
+        "[menu.number]1)[/menu.number] "
+        "[menu.option]Calcular IVA y Total con la tasa actual[/menu.option]\n"
+        "[menu.number]2)[/menu.number] "
+        "[menu.option]Actualizar TASA_IVA[/menu.option]\n"
+        "[menu.number]3)[/menu.number] "
+        "[menu.option]Demostración Antes/Después[/menu.option]\n"
+        "[menu.number]4)[/menu.number] "
+        "[menu.option]Salir[/menu.option]"
     )
     return Panel(
         Align.left(texto),
@@ -156,7 +163,13 @@ def _panel_demo(precio_base: float, tasa_old: float, tasa_new: float) -> Panel:
     iva_new = round(precio_base * tasa_new, 2)
     total_new = round(precio_base + iva_new, 2)
 
-    t1 = Table(title="Antes", expand=True, box=ROUNDED, header_style="label", title_style="label")
+    t1 = Table(
+        title="Antes",
+        expand=True,
+        box=ROUNDED,
+        header_style="label",
+        title_style="label",
+    )
     t1.add_column("Campo", style="label")
     t1.add_column("Valor", justify="right", style="value")
     t1.add_row("Tasa", f"{tasa_old*100:.2f}%")
@@ -164,7 +177,13 @@ def _panel_demo(precio_base: float, tasa_old: float, tasa_new: float) -> Panel:
     t1.add_row("IVA", f"{iva_old:.2f}")
     t1.add_row("Total", f"{total_old:.2f}")
 
-    t2 = Table(title="Después", expand=True, box=ROUNDED, header_style="label", title_style="label")
+    t2 = Table(
+        title="Después",
+        expand=True,
+        box=ROUNDED,
+        header_style="label",
+        title_style="label",
+    )
     t2.add_column("Campo", style="label")
     t2.add_column("Valor", justify="right", style="value")
     t2.add_row("Tasa", f"[success]{tasa_new*100:.2f}%[/success]")
@@ -226,7 +245,10 @@ def menu() -> None:
                 actualizar_tasa_iva(nueva_tasa)
                 console.print(
                     Panel.fit(
-                        f"[success]TASA_IVA actualizada a {nueva_tasa*100:.2f}%[/success]",
+                        (
+                            "[success]TASA_IVA actualizada a "
+                            f"{nueva_tasa*100:.2f}%[/success]"
+                        ),
                         border_style="success",
                         title="OK",
                         box=ROUNDED,
@@ -247,7 +269,9 @@ def menu() -> None:
                 precio_txt = Prompt.ask("Precio base para la demostración")
                 precio_base = _parse_float(precio_txt)
                 tasa_old = TASA_IVA
-                tasa_txt = Prompt.ask("Nueva tasa (0 a 1) para comparar. Ej: 0.2")
+                tasa_txt = Prompt.ask(
+                    "Nueva tasa (0 a 1) para comparar. Ej: 0.2"
+                )
                 tasa_new = _parse_float(tasa_txt)
                 if not (0.0 <= tasa_new <= 1.0):
                     raise ValueError("La tasa debe estar en el rango [0, 1].")

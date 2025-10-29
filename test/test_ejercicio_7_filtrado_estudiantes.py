@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pytest
+
 from src.bloque2.ejercicio_7_filtrado_estudiantes import filtrar_aprobados
 
 

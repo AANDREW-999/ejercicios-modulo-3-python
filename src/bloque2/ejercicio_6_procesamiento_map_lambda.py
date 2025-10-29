@@ -2,15 +2,15 @@ from __future__ import annotations
 
 from typing import Any
 
+# NUEVO: estilos y cajas
+from rich.align import Align
+from rich.box import DOUBLE, HEAVY, ROUNDED
 from rich.columns import Columns
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import FloatPrompt, IntPrompt, Prompt
 from rich.table import Table
-# NUEVO: estilos y cajas
-from rich.align import Align
 from rich.text import Text
-from rich.box import HEAVY, ROUNDED, DOUBLE
 from rich.theme import Theme
 
 __all__ = ["extraer_precios_con_descuento", "menu", "main"]
@@ -99,9 +99,13 @@ def _panel_titulo() -> Panel:
 def _panel_menu() -> Panel:
     # NUEVO: opciones coloreadas y caja pesada
     texto = (
-        f"[menu.number]1)[/menu.number] [menu.option]Ejemplo por defecto (10% de descuento)[/menu.option]\n"
-        f"[menu.number]2)[/menu.number] [menu.option]Productos y descuento personalizado[/menu.option]\n"
-        f"[menu.number]3)[/menu.number] [menu.option]Salir[/menu.option]"
+        "[menu.number]1)[/menu.number] "
+        "[menu.option]Ejemplo por defecto (10% de descuento)"
+        "[/menu.option]\n"
+        "[menu.number]2)[/menu.number] "
+        "[menu.option]Productos y descuento personalizado[/menu.option]\n"
+        "[menu.number]3)[/menu.number] "
+        "[menu.option]Salir[/menu.option]"
     )
     return Panel(texto, title="Menú", border_style="menu.border", box=HEAVY)
 

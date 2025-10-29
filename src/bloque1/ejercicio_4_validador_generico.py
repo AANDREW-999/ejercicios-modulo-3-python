@@ -4,15 +4,15 @@ import re
 from collections.abc import Callable
 from typing import TypeVar
 
+from rich.align import Align
+from rich.box import DOUBLE, HEAVY, ROUNDED
 from rich.columns import Columns
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import IntPrompt, Prompt
-from rich.table import Table
-from rich.align import Align
 from rich.rule import Rule
+from rich.table import Table
 from rich.text import Text
-from rich.box import HEAVY, ROUNDED, DOUBLE
 from rich.theme import Theme
 
 __all__ = [
@@ -42,6 +42,11 @@ THEME = Theme(
 )
 console = Console(theme=THEME)
 T = TypeVar("T")
+
+# Constantes para opciones del menú (evitar valores mágicos)
+OPCION_VALIDAR = 1
+OPCION_FILTRAR = 2
+OPCION_SALIR = 3
 
 
 def aplicar_validador(datos: list[T], validador: Callable[[T], bool]) -> list[T]:
@@ -145,9 +150,12 @@ def _panel_menu() -> Panel:
     """
     # NUEVO: opciones coloreadas y caja pesada
     texto = (
-        f"[menu.number]1)[/menu.number] [menu.option]Validar correos electrónicos[/menu.option]\n"
-        f"[menu.number]2)[/menu.number] [menu.option]Filtrar números mayores a 10[/menu.option]\n"
-        f"[menu.number]3)[/menu.number] [menu.option]Salir[/menu.option]"
+        "[menu.number]1)[/menu.number] "
+        "[menu.option]Validar correos electrónicos[/menu.option]\n"
+        "[menu.number]2)[/menu.number] "
+        "[menu.option]Filtrar números mayores a 10[/menu.option]\n"
+        "[menu.number]3)[/menu.number] "
+        "[menu.option]Salir[/menu.option]"
     )
     return Panel(
         Align.left(texto),
@@ -278,13 +286,13 @@ def menu() -> None:
                 choices=["1", "2", "3"],
             )
         except Exception:
-            opcion = 3
+            opcion = OPCION_SALIR
 
-        if opcion == 1:
+        if opcion == OPCION_VALIDAR:
             _flujo_validar_correos()
-        elif opcion == 2:
+        elif opcion == OPCION_FILTRAR:
             _flujo_filtrar_mayores()
-        elif opcion == 3:
+        elif opcion == OPCION_SALIR:
             break
 
         # NUEVO: separador y prompt de continuación con estilo
@@ -306,7 +314,9 @@ def _flujo_validar_correos() -> None:
     Returns:
         None
     """
-    console.print(Rule(Text(" Validación de correos ", style="title"), style="accent"))
+    console.print(
+        Rule(Text(" Validación de correos ", style="title"), style="accent")
+    )
     entrada = Prompt.ask(
         "Ingresa correos separados por comas",
         default="ana@mail.com, malo, user@dominio.com",
@@ -321,7 +331,13 @@ def _flujo_validar_correos() -> None:
         _panel_resumen(len(correos), len(validos)),
     ]
     # NUEVO: enmarca los paneles para mayor cohesión visual
-    console.print(Panel(Columns(paneles, equal=True, expand=True), border_style="accent", box=ROUNDED))
+    console.print(
+        Panel(
+            Columns(paneles, equal=True, expand=True),
+            border_style="accent",
+            box=ROUNDED,
+        )
+    )
 
 
 def _flujo_filtrar_mayores() -> None:
@@ -333,7 +349,9 @@ def _flujo_filtrar_mayores() -> None:
     Returns:
         None
     """
-    console.print(Rule(Text(" Números mayores a 10 ", style="title"), style="accent"))
+    console.print(
+        Rule(Text(" Números mayores a 10 ", style="title"), style="accent")
+    )
     entrada = Prompt.ask(
         "Ingresa números enteros separados por comas",
         default="4, 11, 9, 25, x, 10, 13",
@@ -349,14 +367,23 @@ def _flujo_filtrar_mayores() -> None:
     ]
     if tokens_invalidos:
         aviso = Panel(
-            f"[warning]Ignorados:[/warning] [value]{', '.join(tokens_invalidos)}[/value]",
+            (
+                "[warning]Ignorados:[/warning] "
+                f"[value]{', '.join(tokens_invalidos)}[/value]"
+            ),
             title="Tokens no numéricos",
             border_style="warning",
             box=ROUNDED,
         )
         paneles.append(aviso)
 
-    console.print(Panel(Columns(paneles, equal=True, expand=True), border_style="accent", box=ROUNDED))
+    console.print(
+        Panel(
+            Columns(paneles, equal=True, expand=True),
+            border_style="accent",
+            box=ROUNDED,
+        )
+    )
 
 
 def main() -> None:

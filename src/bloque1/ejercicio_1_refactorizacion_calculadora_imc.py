@@ -9,6 +9,7 @@ limpio y enfocado en el flujo principal.
 from typing import Final
 
 from rich.align import Align
+
 # NUEVO: estilos, tablas y cajas
 from rich.box import HEAVY, ROUNDED
 from rich.console import Console
