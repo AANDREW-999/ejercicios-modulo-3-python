@@ -177,8 +177,9 @@ def _panel_menu() -> Panel:
         "[menu.key]2)[/menu.key] [menu.option]Agregar tarea[/menu.option]\n"
         "[menu.key]3)[/menu.key] [menu.option]Salir[/menu.option]"
     )
-    return Panel(texto, title="[accent]Menú[/accent]", border_style="menu.border"
-                 , box=box.HEAVY)
+    return Panel(
+        texto, title="[accent]Menú[/accent]", border_style="menu.border", box=box.HEAVY
+    )
 
 
 def _tabla_tareas(tareas: Iterable[str]) -> Table:
@@ -295,6 +296,5 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         console.print(
-            "\n\n[bold red]Programa interrumpido por el usuario. "
-            "Adiós.[/bold red]"
+            "\n\n[bold red]Programa interrumpido por el usuario. Adiós.[/bold red]"
         )

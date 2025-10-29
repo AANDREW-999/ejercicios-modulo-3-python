@@ -7,9 +7,7 @@ from src.bloque2.ejercicio_8_transformacion_comprehensions import (
 
 
 def test_lista_palabras_mayusculas_y_longas() -> None:
-    texto = (
-        "Hola mundo! Programación en Python, pruebas y documentación extensa."
-    )
+    texto = "Hola mundo! Programación en Python, pruebas y documentación extensa."
     resultado = palabras_mayusculas_largas(texto, min_longitud=5)
     esperado = [
         "PROGRAMACIÓN",

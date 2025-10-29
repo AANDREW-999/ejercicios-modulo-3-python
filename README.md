@@ -23,14 +23,14 @@
 - 🧹 ruff (formato y lint)
 
 ## ⚡ Ejecución rápida
-- Ejecutar el ejercicio de IMC:
+- Ejecutar ejercicios:
 ```bash
-python -m bloque1.ejercicio_1_refactorizacion_calculadora_imc
+python -m src.bloque1.ejercicio_1_refactorizacion_calculadora_imc
 ```
 
 - Ejecutar pruebas:
 ```bash
-pytest -q
+pytest -v
 ```
 
 - Revisar estilo/lint:
@@ -81,5 +81,5 @@ pip install rich pytest ruff
 - Mantener calidad con ruff.
 
 ## 👤 Autor
-andres felips gonzalez pedraza  
+Andres Felipe Gonzalez Pedraza  
 andresfelipegonzalez5a@gmail.com

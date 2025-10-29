@@ -43,9 +43,7 @@ def test_agregar_existente_acumula_y_actualiza_precio(tmp_path: Path) -> None:
     ruta = tmp_path / "inventario.json"
     inventario: list[dict[str, Any]] = []
     inv.agregar_producto(inventario, "camisa", 100.0, 5, ruta=ruta)
-    actualizado = inv.agregar_producto(
-        inventario, "CAMISA", 120.0, 1, ruta=ruta
-    )
+    actualizado = inv.agregar_producto(inventario, "CAMISA", 120.0, 1, ruta=ruta)
     precio_esperado = 120.0
     stock_esperado = 5 + 1
     assert actualizado["precio"] == precio_esperado

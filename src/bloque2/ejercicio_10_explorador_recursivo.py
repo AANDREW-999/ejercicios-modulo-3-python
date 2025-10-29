@@ -165,9 +165,11 @@ def _panel_menu() -> Panel:
         "[menu.key]3)[/menu.key] [menu.option]Salir[/menu.option]"
     )
     return Panel(
-        texto, title="[accent]Menú[/accent]"
-        , border_style="menu.border"
-        , box=box.ROUNDED)
+        texto,
+        title="[accent]Menú[/accent]",
+        border_style="menu.border",
+        box=box.ROUNDED,
+    )
 
 
 def _tabla_resultados(pares: list[tuple[Any, int]]) -> Table:
@@ -218,9 +220,11 @@ def _panel_resumen(pares: list[tuple[Any, int]]) -> Panel:
         f"[title]Profundidad máxima:[/title] [accent]{maximo}[/accent]"
     )
     return Panel.fit(
-        texto, title="[accent]Resumen[/accent]"
-        , border_style="menu.border"
-        , box=box.ROUNDED)
+        texto,
+        title="[accent]Resumen[/accent]",
+        border_style="menu.border",
+        box=box.ROUNDED,
+    )
 
 
 def _flujo_ejemplo() -> None:
@@ -337,6 +341,5 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         console.print(
-            "\n\n[bold red]Programa interrumpido por el usuario. "
-            "Adiós.[/bold red]"
+            "\n\n[bold red]Programa interrumpido por el usuario. Adiós.[/bold red]"
         )

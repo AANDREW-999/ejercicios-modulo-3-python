@@ -414,8 +414,9 @@ def _panel_menu() -> Panel:
         "[menu.key]5)[/menu.key] [menu.option]Devolver libro[/menu.option]\n"
         "[menu.key]6)[/menu.key] [menu.option]Salir[/menu.option]"
     )
-    return Panel(texto, title="[accent]Menú[/accent]"
-                 , border_style="menu.border", box=box.HEAVY)
+    return Panel(
+        texto, title="[accent]Menú[/accent]", border_style="menu.border", box=box.HEAVY
+    )
 
 
 def _tabla_libros(libros: list[dict[str, Any]], titulo: str) -> Table:
@@ -493,8 +494,11 @@ def _asegurar_ejemplo() -> None:
         return
     ejemplo = [
         {"libro_id": "001", "titulo": "Cien Años de Soledad", "prestado_a": None},
-        {"libro_id": "002", "titulo":
-            "El Amor en los Tiempos del Cólera", "prestado_a": None},
+        {
+            "libro_id": "002",
+            "titulo": "El Amor en los Tiempos del Cólera",
+            "prestado_a": None,
+        },
         {"libro_id": "003", "titulo": "La Ciudad y los Perros", "prestado_a": None},
         {"libro_id": "004", "titulo": "Rayuela", "prestado_a": None},
     ]
@@ -539,8 +543,9 @@ def menu() -> None:
             mostrar_libros(ver_libros_prestados(biblioteca), "Prestados")
 
         elif opcion == "3":
-            q = Prompt.ask("[accent]Título o parte "
-                           "del título a buscar[/accent]").strip()
+            q = Prompt.ask(
+                "[accent]Título o parte del título a buscar[/accent]"
+            ).strip()
             mostrar_libros(buscar_libro(biblioteca, q), f"Búsqueda: {q}")
 
         elif opcion == "4":
@@ -617,6 +622,5 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         console.print(
-            "\n\n[bold red]Programa interrumpido por el usuario. "
-            "Adiós.[/bold red]"
+            "\n\n[bold red]Programa interrumpido por el usuario. Adiós.[/bold red]"
         )

@@ -78,7 +78,7 @@ def calcular_imc(peso: float, altura: float) -> float:
     if altura <= 0:
         raise ValueError("La altura debe ser mayor que 0.")
 
-    imc = peso / (altura ** 2)
+    imc = peso / (altura**2)
     return round(imc, 2)
 
 
@@ -148,8 +148,13 @@ def menu_interactivo(console: Console) -> tuple[float, float] | None:
         console.print(Rule(style="accent"))
         header = Text(" Calculadora de IMC ", style="title")
         sub = Text("Salud • Bienestar • Educación", style="subtitle")
-        console.print(Panel(Align.center(Text.assemble(header, "\n", sub))
-                            , border_style="accent", box=HEAVY))
+        console.print(
+            Panel(
+                Align.center(Text.assemble(header, "\n", sub)),
+                border_style="accent",
+                box=HEAVY,
+            )
+        )
         console.print(Rule(style="accent"))
 
         console.print("[bold cyan]1)[/bold cyan] Calcular IMC")
@@ -164,9 +169,11 @@ def menu_interactivo(console: Console) -> tuple[float, float] | None:
             while True:
                 try:
                     peso_txt = console.input(
-                        "[prompt]» Ingresa tu peso (kg): [/prompt]")
+                        "[prompt]» Ingresa tu peso (kg): [/prompt]"
+                    )
                     altura_txt = console.input(
-                        "[prompt]» Ingresa tu altura (m): [/prompt]")
+                        "[prompt]» Ingresa tu altura (m): [/prompt]"
+                    )
 
                     # Validar vacíos e informar de inmediato
                     missing = []
@@ -301,8 +308,9 @@ def ejecutar_calculadora_interactiva(console: Console, **kwargs) -> None:
         )
         while True:
             respuesta_raw = console.input(pregunta)
-            respuesta = "" if respuesta_raw is None \
-                else str(respuesta_raw).strip().lower()
+            respuesta = (
+                "" if respuesta_raw is None else str(respuesta_raw).strip().lower()
+            )
             if not respuesta:
                 respuesta = "s" if continuar_por_defecto else "n"
 

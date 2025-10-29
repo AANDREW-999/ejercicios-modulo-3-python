@@ -18,9 +18,7 @@ def _crear_csv_tmp(tmp_path: Path, nombre: str) -> Path:
         {"nombre": "Sofía", "edad": "20", "calificacion": "3.5"},
     ]
     with open(ruta, "w", encoding="utf-8", newline="") as fh:
-        escritor = csv.DictWriter(
-            fh, fieldnames=["nombre", "edad", "calificacion"]
-        )
+        escritor = csv.DictWriter(fh, fieldnames=["nombre", "edad", "calificacion"])
         escritor.writeheader()
         escritor.writerows(filas)
     return ruta
@@ -66,9 +64,7 @@ def test_ignora_no_numericos(tmp_path: Path) -> None:
         {"nombre": "C", "edad": "22.5", "calificacion": ""},
     ]
     with open(ruta, "w", encoding="utf-8", newline="") as fh:
-        escritor = csv.DictWriter(
-            fh, fieldnames=["nombre", "edad", "calificacion"]
-        )
+        escritor = csv.DictWriter(fh, fieldnames=["nombre", "edad", "calificacion"])
         escritor.writeheader()
         escritor.writerows(filas)
 

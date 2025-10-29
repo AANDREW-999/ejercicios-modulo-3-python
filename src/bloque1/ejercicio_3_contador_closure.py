@@ -3,6 +3,7 @@
 Incluye: tema de colores, cabecera centrada, paneles con distintos bordes,
 reglas separadoras y tablas estilizadas para una mejor experiencia.
 """
+
 from __future__ import annotations
 
 from collections.abc import Callable
@@ -79,12 +80,17 @@ def _panel_titulo() -> Panel:
         Panel con título y subtítulo centrados.
     """
     title = Text("Fábrica de contadores (Closure)", style="title")
-    subtitle = Text("Cada contador es independiente y recuerda su estado"
-                    , style="subtitle")
+    subtitle = Text(
+        "Cada contador es independiente y recuerda su estado", style="subtitle"
+    )
     group = Group(Align.center(title), Align.center(subtitle))
     return Panel.fit(
-        group, border_style="cyan", box=DOUBLE
-        , title="Ejercicio 3", subtitle="nonlocal • funciones anidadas")
+        group,
+        border_style="cyan",
+        box=DOUBLE,
+        title="Ejercicio 3",
+        subtitle="nonlocal • funciones anidadas",
+    )
 
 
 def _panel_instrucciones() -> Panel:
@@ -156,15 +162,20 @@ def _demo_independencia_panel() -> Panel:
         ("c2()", c2()),
     ]
     tabla = Table(
-        title="[table.header]Demostración de independencia[/table.header]"
-        , show_lines=True, box=ROUNDED, border_style="green")
+        title="[table.header]Demostración de independencia[/table.header]",
+        show_lines=True,
+        box=ROUNDED,
+        border_style="green",
+    )
     tabla.add_column("Llamada", justify="left", style="bold magenta")
     tabla.add_column("Resultado", justify="right", style="success")
     for llamada, res in resultados:
         tabla.add_row(llamada, str(res))
 
-    nota = ("[dim]Observa que c1 y c2 mantienen estados distintos"
-            "; incrementar uno no afecta al otro.[/dim]")
+    nota = (
+        "[dim]Observa que c1 y c2 mantienen estados distintos"
+        "; incrementar uno no afecta al otro.[/dim]"
+    )
     panel_tabla = Panel(tabla, border_style="green", box=ROUNDED)
     return Panel(
         Group(panel_tabla, Align.center(Text.from_markup(nota))),
@@ -197,8 +208,8 @@ def menu() -> None:
         numero_4 = 4
         try:
             opcion = IntPrompt.ask(
-                "[prompt]Elige una opción[/prompt]"
-                , choices=["1", "2", "3", "4"])
+                "[prompt]Elige una opción[/prompt]", choices=["1", "2", "3", "4"]
+            )
         except Exception:  # noqa: BLE001
             opcion = 4
 
@@ -208,19 +219,26 @@ def menu() -> None:
             valores.append(0)
             console.print(
                 Panel.fit(
-                    "[success]Nuevo contador creado.[/success]"
-                    , border_style="green", box=ROUNDED))
+                    "[success]Nuevo contador creado.[/success]",
+                    border_style="green",
+                    box=ROUNDED,
+                )
+            )
         elif opcion == numero_2:
             if not contadores:
                 console.print(
                     Panel.fit(
-                        "[warning]No hay contadores aún. Crea uno primero.[/warning]"
-                        , border_style="yellow", box=ROUNDED))
+                        "[warning]No hay contadores aún. Crea uno primero.[/warning]",
+                        border_style="yellow",
+                        box=ROUNDED,
+                    )
+                )
 
             else:
-                idx_txt = Prompt.ask("[prompt]Ingresa el número "
-                                     "de contador a incrementar[/prompt]"
-                                     , default="1").strip()
+                idx_txt = Prompt.ask(
+                    "[prompt]Ingresa el número de contador a incrementar[/prompt]",
+                    default="1",
+                ).strip()
                 try:
                     idx = int(idx_txt)
                     if not (1 <= idx <= len(contadores)):
@@ -236,16 +254,23 @@ def menu() -> None:
                         )
                     )
                 except ValueError as exc:
-                    console.print(Panel.fit(f"[error]Error:[/error] {exc}"
-                                            , border_style="red", box=ROUNDED))
+                    console.print(
+                        Panel.fit(
+                            f"[error]Error:[/error] {exc}",
+                            border_style="red",
+                            box=ROUNDED,
+                        )
+                    )
         elif opcion == numero_3:
             console.print(_demo_independencia_panel())
         elif opcion == numero_4:
             break
 
-        cont = Prompt.ask("\n[info]Pulsa Enter para continuar[/info] "
-                          "[dim](o escribe 'salir' para terminar)[/dim]"
-                          , default="")
+        cont = Prompt.ask(
+            "\n[info]Pulsa Enter para continuar[/info] "
+            "[dim](o escribe 'salir' para terminar)[/dim]",
+            default="",
+        )
         if cont.strip().lower() == "salir":
             break
 

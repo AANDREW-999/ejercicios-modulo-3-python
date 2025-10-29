@@ -56,9 +56,7 @@ def test_lectura_csv_basica(tmp_path: Path) -> None:
 
 def test_lectura_json_formato_mapa_y_lista(tmp_path: Path) -> None:
     ruta_mapa = _json_tmp_mapa(tmp_path, "c1.json", {"PY": "Python", "JS": "JS"})
-    ruta_lista = _json_tmp_lista(
-        tmp_path, "c2.json", [{"id": "DB", "nombre": "Bases"}]
-    )
+    ruta_lista = _json_tmp_lista(tmp_path, "c2.json", [{"id": "DB", "nombre": "Bases"}])
     cursos_mapa = leer_json_cursos(str(ruta_mapa))
     cursos_lista = leer_json_cursos(str(ruta_lista))
     assert cursos_mapa["PY"] == "Python"

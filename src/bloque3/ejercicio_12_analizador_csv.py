@@ -142,9 +142,7 @@ def analizar_csv(nombre_archivo: str, columna: str) -> dict[str, float]:
         )
 
     if not valores_num:
-        raise ValueError(
-            f"No hay datos numéricos válidos en la columna '{columna}'."
-        )
+        raise ValueError(f"No hay datos numéricos válidos en la columna '{columna}'.")
 
     promedio = round(sum(valores_num) / len(valores_num), 2)
     maximo = round(max(valores_num), 2)
@@ -196,8 +194,8 @@ def _panel_menu() -> Panel:
         "[menu.key]3)[/menu.key] [menu.option]Salir[/menu.option]"
     )
     return Panel(
-        texto, title="[accent]Menú[/accent]", border_style="menu.border"
-        , box=box.HEAVY)
+        texto, title="[accent]Menú[/accent]", border_style="menu.border", box=box.HEAVY
+    )
 
 
 def _tabla_resultados(
@@ -270,9 +268,7 @@ def _asegurar_csv_ejemplo() -> Path:
         {"nombre": "Sofía", "edad": "20", "calificacion": "3.5"},
     ]
     with open(_CSV_EJEMPLO, "w", encoding="utf-8", newline="") as fh:
-        escritor = csv.DictWriter(
-            fh, fieldnames=["nombre", "edad", "calificacion"]
-        )
+        escritor = csv.DictWriter(fh, fieldnames=["nombre", "edad", "calificacion"])
         escritor.writeheader()
         escritor.writerows(filas)
     return _CSV_EJEMPLO
@@ -397,6 +393,5 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         console.print(
-            "\n\n[bold red]Programa interrumpido por el usuario. "
-            "Adiós.[/bold red]"
+            "\n\n[bold red]Programa interrumpido por el usuario. Adiós.[/bold red]"
         )

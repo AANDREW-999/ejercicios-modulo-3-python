@@ -74,9 +74,7 @@ def aplicar_validador(datos: list[T], validador: Callable[[T], bool]) -> list[T]
 # Validadores de ejemplo
 # ---------------------------
 
-_PATRON_EMAIL = re.compile(
-    r"^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$"
-)
+_PATRON_EMAIL = re.compile(r"^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$")
 
 
 def es_email_valido(correo: str) -> bool:
@@ -314,9 +312,7 @@ def _flujo_validar_correos() -> None:
     Returns:
         None
     """
-    console.print(
-        Rule(Text(" Validación de correos ", style="title"), style="accent")
-    )
+    console.print(Rule(Text(" Validación de correos ", style="title"), style="accent"))
     entrada = Prompt.ask(
         "Ingresa correos separados por comas",
         default="ana@mail.com, malo, user@dominio.com",
@@ -349,9 +345,7 @@ def _flujo_filtrar_mayores() -> None:
     Returns:
         None
     """
-    console.print(
-        Rule(Text(" Números mayores a 10 ", style="title"), style="accent")
-    )
+    console.print(Rule(Text(" Números mayores a 10 ", style="title"), style="accent"))
     entrada = Prompt.ask(
         "Ingresa números enteros separados por comas",
         default="4, 11, 9, 25, x, 10, 13",
@@ -403,6 +397,5 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         console.print(
-            "\n\n[bold red]Programa interrumpido por el usuario. "
-            "Adiós.[/bold red]"
+            "\n\n[bold red]Programa interrumpido por el usuario. Adiós.[/bold red]"
         )

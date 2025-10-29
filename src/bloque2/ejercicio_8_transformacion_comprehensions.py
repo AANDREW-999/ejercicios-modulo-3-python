@@ -203,8 +203,7 @@ def menu() -> None:
             break
 
         _ = Prompt.ask(
-            "\n[dim]Enter para continuar (o escribe 'salir' para terminar)"
-            "[/dim]",
+            "\n[dim]Enter para continuar (o escribe 'salir' para terminar)[/dim]",
             default="",
         )
         if _.strip().lower() == "salir":
@@ -221,6 +220,5 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         console.print(
-            "\n\n[bold red]Programa interrumpido por el usuario. "
-            "Adiós.[/bold red]"
+            "\n\n[bold red]Programa interrumpido por el usuario. Adiós.[/bold red]"
         )

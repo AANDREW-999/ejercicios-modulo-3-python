@@ -67,9 +67,7 @@ def extraer_precios_con_descuento(
 
     factor = 1.0 - float(descuento)
     # Uso explícito de map + lambda (requisito del ejercicio)
-    return list(
-        map(lambda p: round(float(p["precio"]) * factor, 2), productos)
-    )
+    return list(map(lambda p: round(float(p["precio"]) * factor, 2), productos))
 
 
 # ---------------------------
@@ -135,7 +133,7 @@ def _tabla_productos(productos: list[dict[str, Any]]) -> Table:
 
 def _tabla_precios(precios: list[float], descuento: float) -> Table:
     tabla = Table(
-        title=f"Precios con descuento ({descuento*100:.0f}%)",
+        title=f"Precios con descuento ({descuento * 100:.0f}%)",
         show_lines=True,
         expand=True,
         box=ROUNDED,
@@ -201,9 +199,7 @@ def _flujo_personalizado() -> None:
         default="Camisa:50000, Pantalón:80000, Zapatos:120000",
     )
     productos = _parse_productos(texto)
-    descuento = FloatPrompt.ask(
-        "Descuento (0 a 1). Ej: 0.10 para 10%", default=0.10
-    )
+    descuento = FloatPrompt.ask("Descuento (0 a 1). Ej: 0.10 para 10%", default=0.10)
     try:
         precios_desc = extraer_precios_con_descuento(productos, descuento)
     except (TypeError, ValueError) as exc:
@@ -263,6 +259,5 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         console.print(
-            "\n\n[bold red]Programa interrumpido por el usuario. "
-            "Adiós.[/bold red]"
+            "\n\n[bold red]Programa interrumpido por el usuario. Adiós.[/bold red]"
         )

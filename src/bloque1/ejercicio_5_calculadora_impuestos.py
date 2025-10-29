@@ -172,7 +172,7 @@ def _panel_demo(precio_base: float, tasa_old: float, tasa_new: float) -> Panel:
     )
     t1.add_column("Campo", style="label")
     t1.add_column("Valor", justify="right", style="value")
-    t1.add_row("Tasa", f"{tasa_old*100:.2f}%")
+    t1.add_row("Tasa", f"{tasa_old * 100:.2f}%")
     t1.add_row("Precio base", f"{precio_base:.2f}")
     t1.add_row("IVA", f"{iva_old:.2f}")
     t1.add_row("Total", f"{total_old:.2f}")
@@ -186,7 +186,7 @@ def _panel_demo(precio_base: float, tasa_old: float, tasa_new: float) -> Panel:
     )
     t2.add_column("Campo", style="label")
     t2.add_column("Valor", justify="right", style="value")
-    t2.add_row("Tasa", f"[success]{tasa_new*100:.2f}%[/success]")
+    t2.add_row("Tasa", f"[success]{tasa_new * 100:.2f}%[/success]")
     t2.add_row("Precio base", f"{precio_base:.2f}")
     t2.add_row("IVA", f"[success]{iva_new:.2f}[/success]")
     t2.add_row("Total", f"[success]{total_new:.2f}[/success]")
@@ -247,7 +247,7 @@ def menu() -> None:
                     Panel.fit(
                         (
                             "[success]TASA_IVA actualizada a "
-                            f"{nueva_tasa*100:.2f}%[/success]"
+                            f"{nueva_tasa * 100:.2f}%[/success]"
                         ),
                         border_style="success",
                         title="OK",
@@ -269,9 +269,7 @@ def menu() -> None:
                 precio_txt = Prompt.ask("Precio base para la demostración")
                 precio_base = _parse_float(precio_txt)
                 tasa_old = TASA_IVA
-                tasa_txt = Prompt.ask(
-                    "Nueva tasa (0 a 1) para comparar. Ej: 0.2"
-                )
+                tasa_txt = Prompt.ask("Nueva tasa (0 a 1) para comparar. Ej: 0.2")
                 tasa_new = _parse_float(tasa_txt)
                 if not (0.0 <= tasa_new <= 1.0):
                     raise ValueError("La tasa debe estar en el rango [0, 1].")
@@ -309,6 +307,5 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         console.print(
-            "\n\n[bold red]Programa interrumpido por el usuario. "
-            "Adiós.[/bold red]"
+            "\n\n[bold red]Programa interrumpido por el usuario. Adiós.[/bold red]"
         )

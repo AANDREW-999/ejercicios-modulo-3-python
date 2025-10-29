@@ -4,8 +4,9 @@ from src.bloque1.ejercicio_2_generador_perfiles import crear_perfil
 
 
 def test_perfil_completo() -> None:
-    resultado = crear_perfil("Ana", 28,
-                             "leer", "programar", twitter="@ana", github="ana28")
+    resultado = crear_perfil(
+        "Ana", 28, "leer", "programar", twitter="@ana", github="ana28"
+    )
     esperado = (
         "Perfil de Usuario\n"
         "Nombre: Ana\n"
@@ -183,4 +184,3 @@ def test_hobby_no_string_se_descarta() -> None:
         "Redes sociales: Ninguna"
     )
     assert resultado == esperado
-

@@ -368,8 +368,9 @@ def _panel_menu() -> Panel:
         "[menu.key]4)[/menu.key] [menu.option]Vender producto[/menu.option]\n"
         "[menu.key]5)[/menu.key] [menu.option]Salir[/menu.option]"
     )
-    return Panel(texto, title="[accent]Menú[/accent]"
-                 , border_style="menu.border", box=box.HEAVY)
+    return Panel(
+        texto, title="[accent]Menú[/accent]", border_style="menu.border", box=box.HEAVY
+    )
 
 
 def _tabla_inventario(items: list[dict[str, Any]], titulo: str) -> Table:
@@ -406,11 +407,16 @@ def _tabla_inventario(items: list[dict[str, Any]], titulo: str) -> Table:
         valor = round(precio * stock, 2)
         total_valor += valor
         tabla.add_row(
-            str(indice), str(p.get("nombre", "—"))
-            , f"{precio:.2f}", str(stock), f"{valor:.2f}"
+            str(indice),
+            str(p.get("nombre", "—")),
+            f"{precio:.2f}",
+            str(stock),
+            f"{valor:.2f}",
         )
-    tabla.caption = (f"[muted]Valor total inventario mostrado:[/muted] [accent]"
-                     f"{total_valor:.2f}[/accent]")
+    tabla.caption = (
+        f"[muted]Valor total inventario mostrado:[/muted] [accent]"
+        f"{total_valor:.2f}[/accent]"
+    )
     return tabla
 
 
@@ -445,8 +451,9 @@ def mostrar_inventario(
         None
     """
     items = filtrar_disponibles(inventario) if solo_disponibles else list(inventario)
-    tabla = _tabla_inventario(items, "Inventario disponible"
-    if solo_disponibles else "Inventario")
+    tabla = _tabla_inventario(
+        items, "Inventario disponible" if solo_disponibles else "Inventario"
+    )
     paneles = [_panel_info_archivo(_ARCHIVO_INV), tabla]
     console.print(Columns(paneles, equal=True, expand=True))
 
@@ -515,11 +522,10 @@ def menu() -> None:
         elif opcion == "4":
             try:
                 nombre = Prompt.ask("[accent]Nombre del producto[/accent]").strip()
-                cantidad = IntPrompt.ask("[accent]Cantidad a vender (> 0)[/accent]"
-                                         , default=1)
-                producto = vender_producto(
-                    inventario, nombre=nombre, cantidad=cantidad
+                cantidad = IntPrompt.ask(
+                    "[accent]Cantidad a vender (> 0)[/accent]", default=1
                 )
+                producto = vender_producto(inventario, nombre=nombre, cantidad=cantidad)
                 console.print(
                     Panel.fit(
                         f"[ok]★ Venta registrada[/ok]\n"
@@ -569,6 +575,5 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         console.print(
-            "\n\n[bold red]Programa interrumpido por el usuario. "
-            "Adiós.[/bold red]"
+            "\n\n[bold red]Programa interrumpido por el usuario. Adiós.[/bold red]"
         )
