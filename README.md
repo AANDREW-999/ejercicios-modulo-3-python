@@ -25,7 +25,7 @@
 ## ⚡ Ejecución rápida
 - Ejecutar ejercicios:
 ```bash
-python -m src.bloque1.ejercicio_1_refactorizacion_calculadora_imc
+python .\src\bloque1\ejercicio_1_refactorizacion_calculadora_imc.py
 ```
 
 - Ejecutar pruebas:
